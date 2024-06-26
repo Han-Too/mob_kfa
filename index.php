@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
@@ -46,20 +47,9 @@ require __DIR__.'/protected/vendor/autoload.php';
 $app = require_once __DIR__.'/protected/bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
-//
-//$response = $kernel->handle(
-  // echo 'masuk'; 
-  // $request = Request::capture()
-//)->send();
 
-try {
-    $response = $kernel->handle(
-        $request = Request::capture()
-    )->send();
-} catch (\Throwable $th) {
-    echo 'gagal';
-    printf($th);
-}
-//echo 'almost';
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
 $kernel->terminate($request, $response);
-//echo 'done';

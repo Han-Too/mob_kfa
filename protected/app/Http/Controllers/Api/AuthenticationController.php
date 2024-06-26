@@ -39,6 +39,8 @@ class AuthenticationController extends RestController
     {
         $username = isset($request->username) ? $request->username : '';
 
+        dd($request->all());
+
         $salt = 'BtDMQ7RfNVoRzWGjS2DK';
         $bo_pin = BackOffice::encrypt($salt, $request->pin);
         $bo_password = BackOffice::encrypt($salt, $request->password);
@@ -50,6 +52,12 @@ class AuthenticationController extends RestController
             // if ($check_email) {
             //     return RestController::sendError('Email Sudah Terdaftar');
             // }
+
+            if (strlen($request->username) > 30) {
+                DB::rollBack();
+                return RestController::sendError('Username Maksimal 30 Karakter');
+            }
+
             if (!$check) {
                 $input = User::create([
                     'token' => Str::uuid(),
@@ -138,9 +146,9 @@ class AuthenticationController extends RestController
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'old_password'      => 'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[@#$%])(?=.*[0-9])(?=.*[a-z])/',
-            'confirm_password'  => 'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[@#$%])(?=.*[0-9])(?=.*[a-z])/',
-            'password'          => 'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[@#$%])(?=.*[0-9])(?=.*[a-z])/'
+            'old_password' => 'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[@#$%])(?=.*[0-9])(?=.*[a-z])/',
+            'confirm_password' => 'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[@#$%])(?=.*[0-9])(?=.*[a-z])/',
+            'password' => 'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[@#$%])(?=.*[0-9])(?=.*[a-z])/'
         ]);
 
         if ($validator->fails()) {
@@ -180,7 +188,7 @@ class AuthenticationController extends RestController
                 $hashedJawaban = $user->answer;
                 $inputJawaban = $request->jawaban;
                 $email = $user->email;
-                
+
                 if ($user->question == $request->pertanyaan && Hash::check($inputJawaban, $hashedJawaban)) {
                     $username = $request->username;
 
@@ -206,7 +214,7 @@ class AuthenticationController extends RestController
                         ];
 
                         $sendEmail = Mail::to($email)->send(new SendMail($data));
-                        
+
                         $user->update([
                             'password' => Str::random(8)
                         ]);

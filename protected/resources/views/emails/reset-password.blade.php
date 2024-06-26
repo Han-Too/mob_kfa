@@ -310,7 +310,7 @@
                                                     cellspacing="0">
                                                     <tbody>
                                                         <tr>
-                                                            <td> <a href="{{ 'http://114.5.124.109:3001/verified/' . $data['token'] }}"
+                                                            <td> <a href="{{ 'https://mob.cashlez.com/verified/' . $data['token'] }}"
                                                                     target="_blank">Confirmation</a> </td>
                                                         </tr>
                                                     </tbody>

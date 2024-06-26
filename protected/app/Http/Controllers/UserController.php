@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Helpers\Utils;
 use App\Models\MasterPrivilege;
 use App\Models\User;
+use App\Models\user_log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+
+use function PHPUnit\Framework\at;
 
 class UserController extends Controller
 {
@@ -22,8 +26,15 @@ class UserController extends Controller
     public function index()
     {
         $data = User::where('status', '!=', 'deleted')->get();
+        $total = count($data);
         $roles = MasterPrivilege::where('status', '!=', 'deleted')->where('id', '!=', 6)->get();
-        return view('admin.users.index', compact('data', 'roles'));
+        return view('admin.users.index', compact('data', 'roles','total'));
+    }
+    public function deleted()
+    {
+        $data = User::where('status','deleted')->get();
+        $roles = MasterPrivilege::where('status', '!=', 'deleted')->where('id', '!=', 6)->get();
+        return view('admin.users.deleted', compact('data', 'roles'));
     }
 
     /**
@@ -41,12 +52,14 @@ class UserController extends Controller
         ]);
 
         if ($validation->fails()) {
-            return json_encode(['status' => false, 'message' => $validation->messages()]);
+            // return json_encode(['status' => false, 'message' => $validation->messages()]);
+            return json_encode(['status' => false, 'message' => "error controller"]);
         }
+
 
         $check = User::where('username', $request->username)->first();
         if ($check) {
-            return  response()->json(['message'=> "Username is used!", 'status' => false], 200);
+            return response()->json(['message' => "Username is used!", 'status' => false], 200);
         }
 
         if ($request->has('image')) {
@@ -66,14 +79,16 @@ class UserController extends Controller
                 'image' => $img,
                 'password' => Hash::make($request->password),
             ]);
+            $get = User::where('username',$request->username)->first();
+            Utils::addLog($get->token,$get->username,"Create User", "Create a user with name = " . $request->name . " and username = " . $request->username);
 
             if ($user) {
                 DB::commit();
-                return  response()->json(['message'=> "Successfully added user!", 'status' => true], 201);
+                return response()->json(['message' => "Successfully added user!", 'status' => true], 201);
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            return  response()->json(['message'=> "Failed add user!", 'status' => false], 200);
+            return response()->json(['message' => "Failed add user!", 'status' => false], 200);
         }
     }
 
@@ -100,28 +115,65 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $user = User::where('token', $request->token)->first();
+        if($request->alasan == NULL){
+            return response()->json(['message' => "Reason is mandatory!", 'status' => false], 200);
+        }
         DB::beginTransaction();
         try {
+            $description = [];
             if ($request->has('avatar')) {
                 $img = Utils::uploadImageOri($request->avatar);
             } else {
                 $img = $user->image;
             }
             //  dd($img);
-            $user->name = $request->name;
-            $user->email = $request->email;
+            if ($user->name != $request->name) {
+                array_push($description, "~ Edit User " . $user->token . " Name from = " . $user->name . " into = " . $request->name);
+                $user->name = $request->name;
+            } else {
+                $user->name;
+            }
+            if ($user->username != $request->username) {
+                array_push($description, "~ Edit User " . $user->token . " Username from = " . $user->username . " into = " . $request->username);
+                $user->username = $request->username;
+            } else {
+                $user->name;
+            }
+            if ($user->email != $request->email) {
+                array_push($description, "~ Edit User " . $user->token . " Email from = " . $user->email . " into = " . $request->email);
+                $user->email = $request->email;
+            } else {
+                $user->email;
+            }
+            if ($user->role_id != $request->user_role) {
+                array_push($description, "~ Edit User " . $user->token . " Role from = " . $user->role_id . " into = " . $request->user_role);
+                $user->role_id = $request->user_role;
+            } else {
+                $user->role_id;
+            }
+            if ($user->image != $img) {
+                array_push($description, "~ Edit User " . $user->token . " Image");
+                $user->image = $img;
+            } else {
+                $user->image;
+            }
+            if ($request->password != NULL) {
+                array_push($description, "~ Edit User " . $user->token . " Password");
+            }
             $user->password = !$request->password ? $user->password : Hash::make($request->password);
-            $user->role_id = $request->user_role;
-            $user->image = $img;
+            // info(implode(" ",$description));
             if ($user->save()) {
+                Utils::addLog($request->token,$user->username,"Update User", $request->alasan);
+                // foreach ($description as $val) {
+                // }
                 DB::commit();
-                return  response()->json(['message'=> "Successfully update user!", 'status' => true], 201);
+                return response()->json(['message' => "Successfully update user!", 'status' => true], 201);
             }
             DB::rollBack();
-            return  response()->json(['message'=> "Failed add user!", 'status' => false], 200);
+            return response()->json(['message' => "Failed add user!", 'status' => false], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return  response()->json(['message'=> "Failed add user!", 'status' => false], 200);
+            return response()->json(['message' => "Failed add user!", 'status' => false], 200);
         }
     }
 
@@ -131,14 +183,31 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($token)
+    public function destroy(Request $request,$token)
     {
         $user = User::where('token', $token)->first();
         if ($user) {
             $user->status = 'deleted';
-            $user->username = Str::uuid()->toString();
+            $user->password = Hash::make("CASHLEZ2024");
+            // $user->username = Str::uuid()->toString();
+            Utils::addLog($token,$user->username,"Delete User", $request->alasan);
             $user->save();
-            return redirect('users')->with('success', 'User deleted successfully');
+            return redirect('users')->with('msg', 'User deleted successfully');
+            // return response()->json(['message' => "Success Delete User!", 'status' => true], 200);
+        }
+    }
+
+    public function activate(Request $request,$token)
+    {
+        $user = User::where('token', $token)->first();
+        if ($user) {
+            $user->status = 'active';
+            $user->password = Hash::make($request->password);
+            // $user->username = Str::uuid()->toString();
+            Utils::addLog($token,$user->username,"Reactivation User", $request->alasan);
+            $user->save();
+            return redirect('users')->with('msg', 'Reactivation User successfully');
+            // return response()->json(['message' => "Success Delete User!", 'status' => true], 200);
         }
     }
 
@@ -147,5 +216,10 @@ class UserController extends Controller
         $user = Auth::user();
         $data = User::where('token', $user->token)->first();
         return view('admin.users.profile', compact('data'));
+    }
+
+    public function logs(){
+        $data = user_log::orderBy('created_at','desc')->get();
+        return view('admin.users.logs', compact('data'));
     }
 }

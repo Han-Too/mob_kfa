@@ -6,6 +6,16 @@
 <!--begin::Body-->
 
 <body id="kt_body" class="header-tablet-and-mobile-fixed aside-enabled">
+
+    @if (session()->has('msg'))
+        <script type="text/javascript">
+            Swal.fire({
+                title: "Success",
+                text: "{{ session()->get('msg') }}",
+                icon: "success"
+            });
+        </script>
+    @endif
     <!--begin::Main-->
     <!--begin::Root-->
     <div class="d-flex flex-column flex-root">
@@ -17,6 +27,7 @@
             @else
                 @include('admin.partials.sidebar')
             @endif
+
             <!--end::Aside-->
             <!--begin::Wrapper-->
             <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">

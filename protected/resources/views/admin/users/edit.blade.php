@@ -1,4 +1,3 @@
-
 <x-app-layout>
 
     <!--begin::Card-->
@@ -91,7 +90,7 @@
                         <!--end::Label-->
                         <!--begin::Input-->
                         <input type="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0"
-                            placeholder="Fill Email" value="{{ $data->email }}"/>
+                            placeholder="Fill Email" value="{{ $data->email }}" />
                         <!--end::Input-->
                     </div>
                     <!--end::Input group-->
@@ -116,6 +115,16 @@
                             placeholder="Fill Password" />
                         <!--end::Input-->
                     </div>
+                    
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-bold fs-6 mb-2">Reason</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <textarea name="alasan" id="alasan" 
+                        class="form-control form-control-solid mb-3 mb-lg-0"></textarea>
+                        <!--end::Input-->
+                    </div>
                     <!--end::Input group-->
                     <!--begin::Input group-->
                     <div class="mb-7">
@@ -130,8 +139,8 @@
                                 <div class="form-check form-check-custom form-check-solid">
                                     <!--begin::Input-->
                                     <input class="form-check-input me-3" name="user_role" type="radio"
-                                        value="{{ $role->id }}"
-                                        id="kt_modal_update_role_option_{{ $role->id }}"  {{ $data->role_id == $role->id ? 'checked' : ''}}/>
+                                        value="{{ $role->id }}" id="kt_modal_update_role_option_{{ $role->id }}"
+                                        {{ $data->role_id == $role->id ? 'checked' : '' }} />
                                     <!--end::Input-->
                                     <!--begin::Label-->
                                     <label class="form-check-label" for="kt_modal_update_role_option_0">
@@ -147,6 +156,7 @@
                         @endforeach
                         <!--end::Roles-->
                     </div>
+
                     <!--end::Input group-->
                 </div>
                 <!--end::Scroll-->

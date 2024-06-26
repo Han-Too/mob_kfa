@@ -214,7 +214,8 @@
                                                         <!--begin::Label-->
                                                         <label class="form-check-label"
                                                             for="kt_modal_update_role_option_0">
-                                                            <div class="fw-bolder text-gray-800">{{ $role->title }}</div>
+                                                            <div class="fw-bolder text-gray-800">{{ $role->title }}
+                                                            </div>
                                                             <div class="text-gray-600">{{ $role->description }}</div>
                                                         </label>
                                                         <!--end::Label-->
@@ -283,7 +284,7 @@
                 <!--begin::Table body-->
                 <tbody class="text-gray-600 fw-bold">
                     <!--begin::Table row-->
-                    @foreach ($data as $item)
+                    @foreach ($data as $index => $item)
                         <tr>
                             <!--begin::Checkbox-->
                             {{-- <td>
@@ -300,8 +301,7 @@
                                     <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                         <a href="{{ route('user.edit', $item->token) }}">
                                             <div class="symbol-label">
-                                                <img src="{{ $item->image }}" alt="Avatar"
-                                                    class="w-100" />
+                                                <img src="{{ $item->image }}" alt="Avatar" class="w-100" />
                                             </div>
                                         </a>
                                     </div>
@@ -355,7 +355,9 @@
                                     <!--end::Menu item-->
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-3">
-                                        <a href="{{ route('user.delete', $item->token) }}" class="menu-link px-3"
+                                        {{-- <a href="{{ route('user.delete', $item->token) }}" class="menu-link px-3" --}}
+                                        <a class="menu-link px-3" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal{{ $index }}"
                                             data-kt-users-table-filter="delete_row">Delete</a>
                                     </div>
                                     <!--end::Menu item-->
@@ -364,6 +366,34 @@
                             </td>
                             <!--end::Action=-->
                         </tr>
+
+                        <div class="modal fade" id="deleteModal{{ $index }}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete
+                                            {{ $item->username }}?</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body my-5">
+                                        <form method="POST" action="{{ route('user.delete', $item->token) }}">
+                                            @csrf
+                                            <div class="mb-3">
+                                                <label class="required fw-bold fs-6 mb-2">Reason</label>
+                                                <textarea name="alasan" required id="alasan" class="form-control form-control-solid mb-3 mb-lg-0"></textarea>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
                     <!--end::Table row-->
                     <!--end::Table row-->

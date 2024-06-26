@@ -117,7 +117,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                                 <div class="text-gray-100 fw-bolder fs-2 mb-2 mt-5">
-                                    {{ number_format(count($newRequestMerchant)) }}</div>
+                                    {{ number_format($newRequestMerchant) }}</div>
                                 <div class="fw-bold text-gray-100">Total New Request Merchants</div>
                             </div>
                             <!--end::Body-->
@@ -144,7 +144,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                                 <div class="text-gray-100 fw-bolder fs-2 mb-2 mt-5">
-                                    {{ number_format(count($updatedMerchant)) }}</div>
+                                    {{ number_format($updatedMerchant) }}</div>
                                 <div class="fw-bold text-gray-100">Total Updated Merchants</div>
                             </div>
                             <!--end::Body-->
@@ -171,7 +171,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                                 <div class="text-gray-100 fw-bolder fs-2 mb-2 mt-5">
-                                    {{ number_format(count($rejectedMerchant)) }}</div>
+                                    {{ number_format($rejectedMerchant) }}</div>
                                 <div class="fw-bold text-gray-100">Total Rejected Merchants</div>
                             </div>
                             <!--end::Body-->
@@ -198,7 +198,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                                 <div class="text-gray-100 fw-bolder fs-2 mb-2 mt-5">
-                                    {{ number_format(count($closedMerchant)) }}</div>
+                                    {{ number_format($closedMerchant) }}</div>
                                 <div class="fw-bold text-gray-100">Total Closed Merchants</div>
                             </div>
                             <!--end::Body-->

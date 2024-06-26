@@ -12,6 +12,7 @@ use App\Models\MerchantDocument;
 use App\Models\MerchantPayment;
 use App\Models\Outlet;
 use App\Models\User;
+use App\Models\user_log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Unique;
@@ -55,9 +56,9 @@ class Utils
                 $image->move(public_path('images'), $imageName);
             }
             $path = url('images/' . $imageName);
-    
+
             return $path;
-        } catch (\Throwable $th) {       
+        } catch (\Throwable $th) {
             return null;
         }
     }
@@ -72,7 +73,7 @@ class Utils
                 $file->move(public_path('files'), $fileName);
             }
             $path = url('files/' . $fileName);
-    
+
             return $path;
         } catch (\Throwable $th) {
             return null;
@@ -92,7 +93,7 @@ class Utils
         if ($status == 'Approve') {
             return 5;
         }
-        
+
         if ($role == 'Merchant Operation' || $role == 'Sales') {
             $layer_id = 4;
         } else if ($role == 'Risk Analyst') {
@@ -134,7 +135,7 @@ class Utils
             $applicantStatus = 'Reject to Merchant Ops';
         } else if ($status == 'Approve') {
             $applicantStatus = 'Approved';
-        } else if ( $status = 'Validation') {
+        } else if ($status = 'Validation') {
             $applicantStatus = 'Process';
         } else {
             $applicantStatus = $status;
@@ -145,13 +146,13 @@ class Utils
 
     public static function internalPaymentStatusByRecomendation($status)
     {
-        if ($status == 'Verification' ) {
+        if ($status == 'Verification') {
             $applicantStatus = 'Verified';
         } else if ($status == 'Close') {
             $applicantStatus = 'Close';
         } else if ($status == 'Validation') {
             $applicantStatus = 'Validated';
-        }  else if ($status == 'Reject') {
+        } else if ($status == 'Reject') {
             $applicantStatus = 'Reject to Merchant Ops';
         } else if ($status == 'Approve') {
             $applicantStatus = 'Approved by Bank';
@@ -160,7 +161,7 @@ class Utils
         } else {
             $applicantStatus = 'New Request';
         }
-        
+
         return $applicantStatus;
     }
 
@@ -175,8 +176,7 @@ class Utils
             $applicantStatus = 'Approved';
         } else if ($status == 'Close') {
             $applicantStatus = 'Close';
-        }
-        else {
+        } else {
             $applicantStatus = 'Process';
         }
         return $applicantStatus;
@@ -379,13 +379,13 @@ class Utils
         if ($check) {
             if ($layer_id == $applicant->layer_id) {
                 $text = 'process';
-            } else{    
+            } else {
                 $text = 'view';
             }
-        } else{
+        } else {
             $text = 'view';
         }
-        
+
         if ($type == 'merchant') {
             if ($applicant) {
                 if ($applicant->internal_status == 'update' && $layer_id == $applicant->layer_id) {
@@ -409,10 +409,10 @@ class Utils
         if ($check) {
             if ($layer_id == $payment->layer_id) {
                 $text = 'process';
-            } else{
+            } else {
                 $text = 'view';
             }
-        } else{
+        } else {
             $text = 'view';
         }
 
@@ -458,7 +458,7 @@ class Utils
         $uploaded = MerchantDocument::where('token_applicant', $token_applicant)->where('image', '!=', null)->count();
 
         $result = ($uploaded / $merchantDocument) * 100;
-        
+
         return round($result);
     }
 
@@ -468,7 +468,7 @@ class Utils
         $approved = MerchantDocument::where('token_applicant', $token_applicant)->whereIn('status_approval', ['Validation', 'Verification'])->count();
 
         $result = ($approved / $merchantDocument) * 100;
-        
+
         return round($result);
     }
 
@@ -477,14 +477,15 @@ class Utils
         $username = str_replace(' ', '', strtolower($words));
 
         $merchant = Merchant::where('username', $username)->first();
-        if($merchant){
-            $username = str_replace(' ', '', strtolower($words)).rand(1,999);
+        if ($merchant) {
+            $username = str_replace(' ', '', strtolower($words)) . rand(1, 999);
         }
 
         return $username;
     }
 
-    public static function statusDocument($status){
+    public static function statusDocument($status)
+    {
         switch ($status) {
             case 'Verification':
                 $statusDocument = 'Verified';
@@ -492,7 +493,7 @@ class Utils
             case 'Validation':
                 $statusDocument = 'Validated';
                 break;
-            
+
             default:
                 $statusDocument = $status;
                 break;
@@ -500,14 +501,29 @@ class Utils
         return $statusDocument;
     }
 
-    public static function getBoIdOutlets($outlet){
+    public static function getBoIdOutlets($outlet)
+    {
         $boId = Outlet::where('outlet', $outlet)->pluck('bo_id')->first();
         return $boId;
     }
 
-    public static function getBankCode($bank){
+    public static function getBankCode($bank)
+    {
         $bankId = Bank::where('name', $bank)->pluck('code')->first();
         return $bankId;
+    }
+
+    public static function addLog($target,$target_username,$title, $description)
+    {
+        $me = Auth::user();
+        user_log::create([
+            "user_token" => $me->token,
+            "user_username" => $me->username,
+            "target_token" => $target,
+            "target_username" => $target_username,
+            "title" => $title,
+            "description" => $description,
+        ]);
     }
 
 }

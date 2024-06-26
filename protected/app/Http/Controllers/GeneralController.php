@@ -38,10 +38,12 @@ class GeneralController extends Controller
         $newMerchant = Merchant::where('status_approval', 'New Request')->where('dokumen_lengkap', true)->orderByDesc('created_at')->limit(10)->get();
         $processMerchant = Merchant::where('status_approval', 'Process')->where('dokumen_lengkap', true)->orderByDesc('created_at')->get();
 
-        $updatedMerchant = Merchant::where('status_approval', 'Updated')->where('dokumen_lengkap', true)->orderByDesc('created_at')->get();
-        $rejectedMerchant = Merchant::where('status_approval', 'Reject')->where('dokumen_lengkap', true)->orderByDesc('created_at')->get();
-        $closedMerchant = Merchant::where('status_approval', 'Close')->where('dokumen_lengkap', true)->orderByDesc('created_at')->get();
-        $newRequestMerchant = Merchant::where('status_approval', 'New Request')->where('dokumen_lengkap', true)->orderByDesc('created_at')->get();
+        $updatedMerchant = Merchant::where('status_approval', 'Updated')->where('dokumen_lengkap', true)->orderByDesc('created_at')->count();
+        $rejectedMerchant = Merchant::where('status_approval', 'Reject')->where('dokumen_lengkap', true)->orderByDesc('created_at')->count();
+        $closedMerchant = Merchant::where('status_approval', 'Close')->where('dokumen_lengkap', true)->orderByDesc('created_at')->count();
+        $newRequestMerchant = Merchant::where('status_approval', 'New Request')->where('dokumen_lengkap', true)->orderByDesc('created_at')->count();
+
+        
 
         return view('admin.dashboard', compact('totalMerchant', 'approvedMerchant', 'processMerchant', 'newMerchant', 'updatedMerchant', 'rejectedMerchant', 'closedMerchant', 'newRequestMerchant'));
     }
@@ -169,6 +171,7 @@ class GeneralController extends Controller
     {
         $merchant = Merchant::with('branches')->where('token_applicant', $token_applicant)->first();
         $signature = MerchantSignature::where('token_applicant', $token_applicant)->pluck('image')->first();
+        
         $data = [
             'data' => $merchant,
             'signature' => $signature

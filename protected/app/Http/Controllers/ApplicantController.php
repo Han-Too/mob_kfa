@@ -15,6 +15,7 @@ use App\Models\MerchantBranch;
 use App\Models\MerchantDocument;
 use App\Models\MerchantPayment;
 use App\Models\MerchantProof;
+use App\Models\MerchantSignature;
 use App\Models\Reason;
 use App\Models\User;
 use Carbon\Carbon;
@@ -72,6 +73,7 @@ class ApplicantController extends Controller
         $merchantApproval = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'merchant')->where('user_id', $user->id)->orderByDesc('created_at')->first();
         $historyApproval = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'merchant')->orderBy('created_at')->get();
         $historyApprovalDesc = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'merchant')->orderByDesc('created_at')->get();
+        $sign = MerchantSignature::where('token_applicant', $data->token_applicant)->orderByDesc('created_at')->first();
 
         $payments = MerchantPayment::where('token_applicant', $data->token_applicant)->where('status', 'active')->orderByDesc('created_at')->get();
         $paymentApproval = HistoryApproval::with('payment')->where('token_applicant', $data->token_applicant)->where('flag', 'payment')->orderByDesc('created_at')->get();
@@ -85,7 +87,7 @@ class ApplicantController extends Controller
         $layers = MasterLayer::where('status', '!=', 'deleted')->get();
 
         $detailHis = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'detail')->orderByDesc('created_at')->get();
-        return view('admin.applicants.show', compact('layers', 'allDocHis', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
+        return view('admin.applicants.show', compact('layers', 'allDocHis', 'sign', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
     }
 
     public function documentUpdate(Request $request)

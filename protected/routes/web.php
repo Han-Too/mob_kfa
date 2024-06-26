@@ -31,22 +31,28 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Route::get('/', function () {
-//     return view('admin.dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+//     return "HELLO WORLD";
+// });
 
 Route::middleware('auth')->group(function () {
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     Route::get('/', [GeneralController::class, 'dashboard'])->name('user.dashboard');
 
 
     // User
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
-    Route::get('/users/delete/{token}', [UserController::class, 'destroy'])->name('user.delete');
+    Route::post('/users/delete/{token}', [UserController::class, 'destroy'])->name('user.delete');
     Route::post('/users/store', [UserController::class, 'store'])->name('user.store');
     Route::get('/users/edit/{token}', [UserController::class, 'edit'])->name('user.edit');
     Route::post('/users/update', [UserController::class, 'update'])->name('user.update');
+    
+    Route::get('/deleted', [UserController::class, 'deleted'])->name('deleted');
+    Route::post('/activate/{token}', [UserController::class, 'activate'])->name('activate');
+    //User Logs
+    Route::get('/logs', [UserController::class, 'logs'])->name('logs');
     // User Profile
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
 

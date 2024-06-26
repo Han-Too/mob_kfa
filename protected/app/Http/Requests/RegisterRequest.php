@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'username'=>'required|min:2|max:30|regex:/^[a-z0-9._-]*$/',
+            'username'=>'required|min:2|regex:/^[a-z0-9._-]*$/',
             'password'=>'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[@#$%])(?=.*[0-9])(?=.*[a-z])/',
             'pin'=>'string|required|min:6',
             'referal_code'=>'',

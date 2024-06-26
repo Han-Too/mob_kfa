@@ -157,7 +157,7 @@ class MerchantController extends RestController
                 $docs = DokumenApplicant::where('status', 'active')->where('type', $merchant->pengajuan_sebagai)->get();
                 foreach ($docs as $key => $value) {
                     $merchantDocument = MerchantDocument::create([
-                        'token_applicant' =>  $merchant->token_applicant,
+                        'token_applicant' => $merchant->token_applicant,
                         'document_id' => $value->id,
                         'image' => null,
                         'status_approval' => null,
@@ -167,12 +167,12 @@ class MerchantController extends RestController
                     ]);
                 }
 
-                Utils::addHistory($merchant->token_applicant, 'New Request', '', 'merchant', $merchant->id,);
+                Utils::addHistory($merchant->token_applicant, 'New Request', '', 'merchant', $merchant->id, );
 
                 $checkUsername = BackOffice::checkUsername($merchant->username);
                 if ($checkUsername !== 200) {
                     DB::rollBack();
-                    return RestController::sendError('Username is Not Verified!');
+                    return RestController::sendError('Username already used or duplicate!');
                 }
 
                 // $integrated = $this->addMerchantBO($merchant->token_applicant);
@@ -182,16 +182,19 @@ class MerchantController extends RestController
                 //     return RestController::sendError('Gagal pengajuan merchant');
                 // }
                 $app = Applicant::where('token_applicant', $merchant->token_applicant)->first();
-                
+
                 // SUbmitted
-                Mail::to($merchant->email)->send(new ApprovalMail($merchant, $app));
-                Mail::to($merchant->bisnis_email)->send(new ApprovalMail($merchant, $app));
-                Mail::to($merchant->email_pengurus)->send(new ApprovalMail($merchant, $app));
+
+                Mail::to($merchant->email)->cc([$merchant->bisnis_email, $merchant->email_pengurus])->send(new ApprovalMail($merchant, $app));
+                // Mail::to($merchant->email)->send(new ApprovalMail($merchant, $app));
+                // Mail::to($merchant->bisnis_email)->send(new ApprovalMail($merchant, $app));
+                // Mail::to($merchant->email_pengurus)->send(new ApprovalMail($merchant, $app));
 
                 // Account
-                Mail::to($merchant->email)->send(new AccountMail($merchant, $app));
-                Mail::to($merchant->bisnis_email)->send(new AccountMail($merchant, $app));
-                Mail::to($merchant->email_pengurus)->send(new AccountMail($merchant, $app));
+                Mail::to($merchant->email)->cc([$merchant->bisnis_email, $merchant->email_pengurus])->send(new AccountMail($merchant, $app));
+                // Mail::to($merchant->email)->send(new AccountMail($merchant, $app));
+                // Mail::to($merchant->bisnis_email)->send(new AccountMail($merchant, $app));
+                // Mail::to($merchant->email_pengurus)->send(new AccountMail($merchant, $app));
 
                 DB::commit();
                 return RestController::sendResponse('Berhasil pengajuan merchant', $merchant);
@@ -207,7 +210,7 @@ class MerchantController extends RestController
     }
 
     public function update(Request $request)
-    {   
+    {
         $user = Auth::user();
         $now = Carbon::now();
         $fiturTransaksi = $request->fitur_transaksi;
@@ -275,7 +278,7 @@ class MerchantController extends RestController
 
                 $payments = explode(', ', $fiturTransaksi);
                 $existingPayments = MerchantPayment::where('token_applicant', $request->token_applicant)->where('status', 'active')->pluck('payment')->toArray();
-                
+
                 foreach ($payments as $key => $value) {
 
                     if (!in_array($value, $existingPayments)) {
@@ -316,7 +319,7 @@ class MerchantController extends RestController
     public function checkBo(Request $request)
     {
         $user = Auth::user();
-        
+
         try {
             $salt = 'BtDMQ7RfNVoRzWGjS2DK';
             $decPass = BackOffice::decrypt($salt, $user->bo_password);
@@ -381,7 +384,7 @@ class MerchantController extends RestController
             if ($merchantDocument) {
                 if ($request->has('file')) {
                     if ($request->file->getClientOriginalExtension() === 'pdf' && $request->file->getClientMimeType() === 'application/pdf') {
-                    // if ($request->file->getClientMimeType() === 'application/pdf') {
+                        // if ($request->file->getClientMimeType() === 'application/pdf') {
                         $image = Utils::uploadFile($request->file);
                     } else {
                         $image = Utils::uploadImageOri($request->file);
@@ -395,7 +398,7 @@ class MerchantController extends RestController
                 $merchant = Merchant::where('token_applicant', $request->token_applicant)->first();
                 if ($merchant->status_approval == 'Reject') {
                     $countReject = MerchantDocument::where('token_applicant', $request->token_applicant)->where('document_id', '!=', $request->document_id)->where('status_approval', 'Reject')->count();
-                    
+
                     if ($countReject == 0) {
                         $merchant->status_approval = 'Updated';
                         $merchant->save();
