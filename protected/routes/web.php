@@ -48,11 +48,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/store', [UserController::class, 'store'])->name('user.store');
     Route::get('/users/edit/{token}', [UserController::class, 'edit'])->name('user.edit');
     Route::post('/users/update', [UserController::class, 'update'])->name('user.update');
-    
-    Route::get('/deleted', [UserController::class, 'deleted'])->name('deleted');
-    Route::post('/activate/{token}', [UserController::class, 'activate'])->name('activate');
-    //User Logs
-    Route::get('/logs', [UserController::class, 'logs'])->name('logs');
+
+    Route::middleware('dewa')->group(function () {
+        Route::get('/deleted', [UserController::class, 'deleted'])->name('deleted');
+        Route::post('/activate/{token}', [UserController::class, 'activate'])->name('activate');
+        //User Logs
+        Route::get('/logs', [UserController::class, 'logs'])->name('logs');
+    });
+
     // User Profile
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
 
@@ -139,7 +142,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/applicants/branches/{token}', [ApplicantController::class, 'branch'])->name('applicant.branch');
     Route::get('/applicants/branches/show/{id}/{token}', [ApplicantController::class, 'branchShow'])->name('applicant.branchShow');
     Route::post('/applicants/branches/update', [ApplicantController::class, 'branchUpdate'])->name('applicant.branchUpdate');
-    
+
     Route::post('/assign/layer', [GeneralController::class, 'assignLayer']);
 
     Route::get('/applicants/export/{status}', [ApplicantController::class, 'export'])->name('applicant.export');
@@ -147,20 +150,20 @@ Route::middleware('auth')->group(function () {
 
 // Configuration
 Route::get('/migrate', function () {
-    Artisan::call('migrate');
+    // Artisan::call('migrate');
     dd('migrated!');
 });
 
 Route::get('/migrate-s', function () {
-    Artisan::call('migrate --path=database\migrations/2024_02_22_021139_create_merchant_proofs_table.php');
+    // Artisan::call('migrate --path=database\migrations/2024_02_22_021139_create_merchant_proofs_table.php');
     dd('migrated!');
 });
 
 Route::get('reboot', function () {
-    Artisan::call('view:clear');
-    Artisan::call('route:clear');
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
+    // Artisan::call('view:clear');
+    // Artisan::call('route:clear');
+    // Artisan::call('config:clear');
+    // Artisan::call('cache:clear');
     // Artisan::call('key:generate');
     dd("rebooted!");
 });
@@ -187,3 +190,7 @@ Route::get('/verified/{token}', [EmailController::class, 'index']);
 Route::get('/verification', [EmailController::class, 'status']);
 
 require __DIR__ . '/auth.php';
+
+Route::get('/mt', function(){
+    return view('maintenance');
+});

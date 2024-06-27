@@ -103,9 +103,14 @@
                             <!--begin::Joined-->
                             <!--begin::Action=-->
                             <td class="text-end">
+                                <button class="btn btn-light btn-active-light-primary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#activateModal{{ $index }}">
+                                    Reactivation
+                                </button>
+                                <!--
                                 <a href="#" class="btn btn-light btn-active-light-primary btn-sm"
-                                    data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
+                                    data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                    Actions
                                     <span class="svg-icon svg-icon-5 m-0">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none">
@@ -114,25 +119,21 @@
                                                 fill="black" />
                                         </svg>
                                     </span>
-                                    <!--end::Svg Icon--></a>
-                                <!--begin::Menu-->
+                                </a>
+                                
                                 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4"
                                     data-kt-menu="true">
-                                    <!--begin::Menu item-->
+                                    begin::Menu item
                                     <div class="menu-item px-3">
                                         <a href="{{ route('user.edit', $item->token) }}" class="menu-link px-3">Edit</a>
                                     </div>
-                                    <!--end::Menu item-->
-                                    <!--begin::Menu item-->
                                     <div class="menu-item px-3">
                                         {{-- <a href="{{ route('user.delete', $item->token) }}" class="menu-link px-3" --}}
-                                        <a class="menu-link px-3" data-bs-toggle="modal"
-                                            data-bs-target="#activateModal{{ $index }}"
+                                        <a class="menu-link px-3" 
                                             data-kt-users-table-filter="delete_row">Reactivation</a>
                                     </div>
-                                    <!--end::Menu item-->
                                 </div>
-                                <!--end::Menu-->
+                            -->
                             </td>
                             <!--end::Action=-->
                         </tr>

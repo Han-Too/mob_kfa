@@ -22,11 +22,14 @@
         <!--begin::Page-->
         <div class="page d-flex flex-row flex-column-fluid">
             <!--begin::Aside-->
-            @if (Auth::user()->role_id != 1)
+
+            {{-- @if (Auth::user()->role_id != "1" || Auth::user()->role_id != "7")
                 @include('admin.partials.sidebar-mo')
             @else
-                @include('admin.partials.sidebar')
-            @endif
+            @include('admin.partials.sidebar')
+            @endif --}}
+            
+            @include('admin.partials.sidebar')
 
             <!--end::Aside-->
             <!--begin::Wrapper-->

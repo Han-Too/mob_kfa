@@ -22,7 +22,6 @@
     <!--begin::Global Stylesheets Bundle(used by all pages)-->
     <link href="{{ asset('tadmin/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('tadmin/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lf1zv8pAAAAAGvplt4HDiOrKx819ndS3SWeDiVq"></script>
 
     <!--end::Global Stylesheets Bundle-->
 </head>
@@ -111,7 +110,7 @@
                             <!--end::Input group-->
                             <!--begin::Actions-->
                             <div class="fv-row mb-10">
-                                <img src="{{ captcha_src() }}" alt="captcha">
+                                <img src="{{ captcha_src("flat") }}" alt="captcha">
                                 <div class="mt-2"></div>
                                 <input type="text" name="captcha"
                                     class="form-control @error('captcha') is-invalid @enderror"
@@ -120,8 +119,15 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="text-center">
                                 <!--begin::Submit button-->
+
+                                {{-- <button class="g-recaptcha" data-sitekey="6Lf1zv8pAAAAAGvplt4HDiOrKx819ndS3SWeDiVq"
+                                    data-callback='onSubmit' data-action='submit'>
+                                    Submit
+                                </button> --}}
+
                                 <button type="submit" class="btn btn-lg btn-primary w-100 mb-5">
                                     <span class="indicator-label">Login</span>
                                 </button>

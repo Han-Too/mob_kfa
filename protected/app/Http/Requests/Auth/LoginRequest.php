@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Factory as ValidationFactory;
 
 class LoginRequest extends FormRequest
 {
@@ -46,6 +47,7 @@ class LoginRequest extends FormRequest
 
             throw ValidationException::withMessages([
                 'username' => trans('auth.failed'),
+                'captcha' => trans('Invalid Captcha'),
             ]);
         }
 
