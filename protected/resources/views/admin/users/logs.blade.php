@@ -20,38 +20,12 @@
                         </svg>
                     </span>
                     <!--end::Svg Icon-->
-                    <input type="text" data-kt-user-table-filter="search"
+                    <input type="text" data-kt-user-table-filter="search" id="searchField"
                         class="form-control form-control-solid w-250px ps-14" placeholder="Search user" />
                 </div>
                 <!--end::Search-->
             </div>
             <!--begin::Card title-->
-            <!--begin::Card toolbar-->
-            <div class="card-toolbar">
-                <!--begin::Toolbar-->
-                <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                    <!--begin::Filter-->
-                    <!--begin::Add user-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#kt_modal_add_user">
-                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr075.svg-->
-                        <span class="svg-icon svg-icon-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none">
-                                <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1"
-                                    transform="rotate(-90 11.364 20.364)" fill="black" />
-                                <rect x="4.36396" y="11.364" width="16" height="2" rx="1"
-                                    fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->Log User</button>
-                    <!--end::Add user-->
-                </div>
-                <!--end::Toolbar-->
-                <!--begin::Group actions-->
-                <!--end::Group actions-->
-            </div>
-            <!--end::Card toolbar-->
         </div>
         <!--end::Card header-->
         <!--begin::Card body-->
@@ -62,12 +36,6 @@
                 <thead>
                     <!--begin::Table row-->
                     <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                        {{-- <th class="w-10px pe-2">
-                            <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                                <input class="form-check-input" type="checkbox" data-kt-check="true"
-                                    data-kt-check-target="#kt_table_users .form-check-input" value="1" />
-                            </div>
-                        </th> --}}
                         <th class="min-w-125px">User</th>
                         <th class="min-w-125px">Target User</th>
                         <th class="min-w-125px">Title</th>
@@ -169,5 +137,13 @@
     </div>
     <!--end::Card-->
     @section('scripts')
+        {{-- <script src="{{ asset('tadmin/js/custom/deleted.js') }}"></script> --}}
+
+        <script type="module">
+            let table = new DataTable('#kt_table_users');
+            $('#searchField').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+        </script>
     @endsection
 </x-app-layout>

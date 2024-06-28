@@ -20,6 +20,140 @@ use Image;
 
 class Utils
 {
+
+
+    //function RNT Foto
+    public static function replace_to_dash_foto_name($text){
+        $textname = $text;
+        $str      = array(' ');
+        $newtext  = str_replace($str,'',$textname);
+
+        return $newtext;
+    }
+
+
+    public static function compressImage($source, $destination, $quality) {
+        // Get image info
+        $imgInfo = getimagesize($source);
+        $mime = $imgInfo['mime'];
+
+        list($width, $height) = getimagesize($source);
+        if($width > 800):
+            $newwidth = 800;
+            $ratio_orig = $width/$newwidth;
+            $newheight  = round($height/$ratio_orig);
+
+        else:
+
+            $newwidth = $width;
+            $newheight = $height;
+
+        endif;
+
+        // Create a new image from file
+        switch($mime){
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($source);
+                break;
+            case 'image/png':
+                $image = imagecreatefrompng($source);
+                break;
+            case 'image/gif':
+                $image = imagecreatefromgif($source);
+                break;
+            default:
+                $image = imagecreatefromjpeg($source);
+        }
+
+
+        $thumb = imagecreatetruecolor($newwidth, $newheight);
+        imagecopyresized($thumb, $image, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+        // Save image
+        imagejpeg($thumb, $destination, $quality);
+
+        // Return compressed image
+        return $destination;
+    }
+
+
+      public static function uploadFile($image)
+   	{
+
+         $basePathFolder = '/var/www/html/images';
+
+         $file_path = $basePathFolder.'/';
+         $image_path1 = '';
+
+
+         $upImageFile = $image->getClientOriginalName();
+         if(isset($upImageFile)) {
+
+            $originalfotoname = basename($upImageFile);
+            $file_path1       = $file_path .date('YmdHis').'_'.Utils::replace_to_dash_foto_name($originalfotoname);
+            $file_path_name_1 = date('YmdHis').'_'.Utils::replace_to_dash_foto_name($originalfotoname);
+            $extention        = substr(strrchr($file_path1,'.'),1);
+
+
+            $imageTemp = $image->getPathname();
+               if (move_uploaded_file($imageTemp, $file_path1)) {
+                  $image_path1 = 'https://mob.cashlez.com/images/'.$file_path_name_1;
+               }
+
+         }
+
+        return $image_path1;
+
+    }
+
+
+
+    public static function uploadImageOriNew($image)
+   {
+
+         $basePathFolder = '/var/www/html/images';
+
+         $file_path = $basePathFolder.'/';
+         $image_path1 = '';
+
+
+         $upImageFile = $image->getClientOriginalName();
+         if(isset($upImageFile)) {
+
+            $originalfotoname = basename($upImageFile);
+            $file_path1       = $file_path .date('YmdHis').'_'.Utils::replace_to_dash_foto_name($originalfotoname);
+            $file_path_name_1 = date('YmdHis').'_'.Utils::replace_to_dash_foto_name($originalfotoname);
+            $extention        = substr(strrchr($file_path1,'.'),1);
+
+            if(strtolower($extention) == 'jpg' or strtolower($extention) == 'jpeg' or strtolower($extention) == 'png' or strtolower($extention) == 'gif'){
+
+                $imageTemp = $image->getPathname();
+                //satuan gambar byt
+  //              $x = $image->getClientSize();
+//		return $x;
+//                if($cekfileImageupload > 1700000):
+
+                        // Compress size and upload image
+	                $uploadIMgdata = Utils::compressImage($imageTemp, $file_path1, 75);
+                        if($uploadIMgdata):
+                            $image_path1 = 'https://mob.cashlez.com/images/'.$file_path_name_1;
+                        endif;
+                        //new module compress data img----
+
+  /*              else:
+                    if (move_uploaded_file($imageTemp, $file_path1)) {
+                        $image_path1 = 'https://mob.cashlez.com/images/'.$file_path_name_1;
+                    }
+                endif; */
+
+             }
+         }
+
+	return $image_path1;
+
+    }
+    //end function RNT Foto
+
     public static function uploadImage($image, $width)
     {
         $img = Image::make($image);
@@ -46,6 +180,7 @@ class Utils
         return $storageLink;
     }
 
+
     public static function uploadImageOri($image)
     {
         try {
@@ -63,16 +198,16 @@ class Utils
         }
     }
 
-    public static function uploadFile($file)
+    public static function uploadFileOld($file)
     {
         try {
             $fileName = time() . uniqid() . '.' . $file->extension();
             if (env('APP_ENV') == 'production' || !env('APP_ENV')) {
-                $file->move('files', $fileName);
+                $file->move('images', $fileName);
             } else {
                 $file->move(public_path('files'), $fileName);
             }
-            $path = url('files/' . $fileName);
+            $path = url('images/' . $fileName);
 
             return $path;
         } catch (\Throwable $th) {
@@ -93,7 +228,6 @@ class Utils
         if ($status == 'Approve') {
             return 5;
         }
-
         if ($role == 'Merchant Operation' || $role == 'Sales') {
             $layer_id = 4;
         } else if ($role == 'Risk Analyst') {
@@ -135,7 +269,7 @@ class Utils
             $applicantStatus = 'Reject to Merchant Ops';
         } else if ($status == 'Approve') {
             $applicantStatus = 'Approved';
-        } else if ($status = 'Validation') {
+        } else if ( $status = 'Validation') {
             $applicantStatus = 'Process';
         } else {
             $applicantStatus = $status;
@@ -146,13 +280,13 @@ class Utils
 
     public static function internalPaymentStatusByRecomendation($status)
     {
-        if ($status == 'Verification') {
+        if ($status == 'Verification' ) {
             $applicantStatus = 'Verified';
         } else if ($status == 'Close') {
             $applicantStatus = 'Close';
         } else if ($status == 'Validation') {
             $applicantStatus = 'Validated';
-        } else if ($status == 'Reject') {
+        }  else if ($status == 'Reject') {
             $applicantStatus = 'Reject to Merchant Ops';
         } else if ($status == 'Approve') {
             $applicantStatus = 'Approved by Bank';
@@ -161,7 +295,7 @@ class Utils
         } else {
             $applicantStatus = 'New Request';
         }
-
+        
         return $applicantStatus;
     }
 
@@ -176,7 +310,8 @@ class Utils
             $applicantStatus = 'Approved';
         } else if ($status == 'Close') {
             $applicantStatus = 'Close';
-        } else {
+        }
+        else {
             $applicantStatus = 'Process';
         }
         return $applicantStatus;
@@ -379,13 +514,13 @@ class Utils
         if ($check) {
             if ($layer_id == $applicant->layer_id) {
                 $text = 'process';
-            } else {
+            } else{    
                 $text = 'view';
             }
-        } else {
+        } else{
             $text = 'view';
         }
-
+        
         if ($type == 'merchant') {
             if ($applicant) {
                 if ($applicant->internal_status == 'update' && $layer_id == $applicant->layer_id) {
@@ -409,10 +544,10 @@ class Utils
         if ($check) {
             if ($layer_id == $payment->layer_id) {
                 $text = 'process';
-            } else {
+            } else{
                 $text = 'view';
             }
-        } else {
+        } else{
             $text = 'view';
         }
 
@@ -458,7 +593,7 @@ class Utils
         $uploaded = MerchantDocument::where('token_applicant', $token_applicant)->where('image', '!=', null)->count();
 
         $result = ($uploaded / $merchantDocument) * 100;
-
+        
         return round($result);
     }
 
@@ -468,24 +603,27 @@ class Utils
         $approved = MerchantDocument::where('token_applicant', $token_applicant)->whereIn('status_approval', ['Validation', 'Verification'])->count();
 
         $result = ($approved / $merchantDocument) * 100;
-
+        
         return round($result);
     }
 
     public static function generateUsername($words)
     {
-        $username = str_replace(' ', '', strtolower($words));
+        $username = strtolower($words);
+        
+        $username = preg_replace('/[^a-z0-9\s]/', '', $username);
+        $username = str_replace(' ', '', $username);
 
         $merchant = Merchant::where('username', $username)->first();
-        if ($merchant) {
-            $username = str_replace(' ', '', strtolower($words)) . rand(1, 999);
+
+        if($merchant){
+            $username = str_replace(' ', '', strtolower($words)).rand(1,999);
         }
 
         return $username;
     }
 
-    public static function statusDocument($status)
-    {
+    public static function statusDocument($status){
         switch ($status) {
             case 'Verification':
                 $statusDocument = 'Verified';
@@ -493,7 +631,7 @@ class Utils
             case 'Validation':
                 $statusDocument = 'Validated';
                 break;
-
+            
             default:
                 $statusDocument = $status;
                 break;
@@ -501,14 +639,12 @@ class Utils
         return $statusDocument;
     }
 
-    public static function getBoIdOutlets($outlet)
-    {
+    public static function getBoIdOutlets($outlet){
         $boId = Outlet::where('outlet', $outlet)->pluck('bo_id')->first();
         return $boId;
     }
 
-    public static function getBankCode($bank)
-    {
+    public static function getBankCode($bank){
         $bankId = Bank::where('name', $bank)->pluck('code')->first();
         return $bankId;
     }

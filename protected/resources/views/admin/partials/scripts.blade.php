@@ -1,6 +1,7 @@
 @stack('script')
 <script>
     var hostUrl = "{{ asset('tadmin/') }}";
+    var baseUrl = "https://dev-mob.cashlez.com/mob/";
 </script>
 <!--begin::Global Javascript Bundle(used by all pages)-->
 <script src="{{ asset('tadmin/plugins/global/plugins.bundle.js') }}"></script>

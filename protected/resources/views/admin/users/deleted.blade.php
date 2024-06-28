@@ -20,7 +20,7 @@
                         </svg>
                     </span>
                     <!--end::Svg Icon-->
-                    <input type="text" data-kt-user-table-filter="search"
+                    <input type="text" data-kt-user-table-filter="search" id="searchField"
                         class="form-control form-control-solid w-250px ps-14" placeholder="Search user" />
                 </div>
                 <!--end::Search-->
@@ -46,7 +46,7 @@
                         <th class="min-w-125px">Username</th>
                         <th class="min-w-125px">Role</th>
                         <th class="min-w-125px">Status</th>
-                        <th class="min-w-125px">Joined Date</th>
+                        <th class="min-w-125px">Delete Date</th>
                         <th class="text-end min-w-100px">Actions</th>
                     </tr>
                     <!--end::Table row-->
@@ -99,7 +99,7 @@
                             <td>{{ $item->status }}</td>
                             <!--end::Two step=-->
                             <!--begin::Joined-->
-                            <td>{{ $item->created_at->format('d F Y') }}</td>
+                            <td>{{ $item->updated_at->format('Y F d') }}</td>
                             <!--begin::Joined-->
                             <!--begin::Action=-->
                             <td class="text-end">
@@ -183,7 +183,12 @@
     </div>
     <!--end::Card-->
     @section('scripts')
-        <script src="{{ asset('tadmin/js/custom/user.js') }}"></script>
-        <script src="{{ asset('tadmin/js/custom/userAdd.js') }}"></script>
+        {{-- <script src="{{ asset('tadmin/js/custom/user.js') }}"></script> --}}
+        <script type="module">
+            let table = new DataTable('#kt_table_users');
+            $('#searchField').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+        </script>
     @endsection
 </x-app-layout>

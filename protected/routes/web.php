@@ -122,6 +122,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents/update', [DokumenApplicantController::class, 'update'])->name('document.update');
     Route::get('/documents/delete/{id}', [DokumenApplicantController::class, 'destroy'])->name('document.delete');
 
+    Route::get('/downloadKabeh/{id}', [GeneralController::class, 'downloadZip'])->name('document.downloadZip');
+
 
     // Merchants
     Route::get('/merchants', [MerchantController::class, 'index'])->name('merchant.index');

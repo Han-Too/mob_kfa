@@ -56,6 +56,7 @@ return array(
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Middleware\\isDewaAdmin' => $baseDir . '/app/Http/Middleware/isDewaAdmin.php',
     'App\\Http\\Requests\\Auth\\LoginRequest' => $baseDir . '/app/Http/Requests/Auth/LoginRequest.php',
+    'App\\Http\\Requests\\Auth\\LoginRequestMobile' => $baseDir . '/app/Http/Requests/Auth/LoginRequestMobile.php',
     'App\\Http\\Requests\\ProfileUpdateRequest' => $baseDir . '/app/Http/Requests/ProfileUpdateRequest.php',
     'App\\Http\\Requests\\RegisterRequest' => $baseDir . '/app/Http/Requests/RegisterRequest.php',
     'App\\Http\\Requests\\Storeuser_logRequest' => $baseDir . '/app/Http/Requests/Storeuser_logRequest.php',

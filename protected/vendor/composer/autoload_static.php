@@ -716,6 +716,7 @@ class ComposerStaticInitddc60d3baca168ba69a923be9a29b11b
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\isDewaAdmin' => __DIR__ . '/../..' . '/app/Http/Middleware/isDewaAdmin.php',
         'App\\Http\\Requests\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequest.php',
+        'App\\Http\\Requests\\Auth\\LoginRequestMobile' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequestMobile.php',
         'App\\Http\\Requests\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileUpdateRequest.php',
         'App\\Http\\Requests\\RegisterRequest' => __DIR__ . '/../..' . '/app/Http/Requests/RegisterRequest.php',
         'App\\Http\\Requests\\Storeuser_logRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Storeuser_logRequest.php',

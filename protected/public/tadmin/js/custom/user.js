@@ -187,6 +187,7 @@ var KTUsersList = (function () {
                     .querySelector('[data-kt-user-table-filter="search"]')
                     .addEventListener("keyup", function (t) {
                         e.search(t.target.value).draw();
+                        console.log(t.target.value);
                     }),
                 document
                     .querySelector('[data-kt-user-table-filter="reset"]')

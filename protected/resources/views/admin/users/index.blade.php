@@ -419,6 +419,7 @@
     <!--end::Card-->
     @section('scripts')
         <script src="{{ asset('tadmin/js/custom/user.js') }}"></script>
+        
         <script src="{{ asset('tadmin/js/custom/userAdd.js') }}"></script>
     @endsection
 </x-app-layout>

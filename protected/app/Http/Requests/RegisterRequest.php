@@ -27,8 +27,8 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'username'=>'required|min:6|max:30|regex:/^[a-z0-9._-]*$/',
-            'password'=>'required|min:8|max:16|regex:/^(?=.[A-Z])(?=.[a-z])(?=.[!@#$%&])(?=.[0-9])[A-Za-z0-9!@#$%&]+$/',
+            'username'=>'required|min:2|max:30|regex:/^[a-z0-9._-]*$/',
+            'password'=>'required|min:8|max:16|regex:/^(?=.*[A-Z])(?=.*[!@#$%&])(?=.*[0-9])(?=.*[a-z])/',
             'pin'=>'string|required|min:6',
             'referal_code'=>'',
             'kewarganegaraan'=>'string|required',
@@ -38,12 +38,22 @@ class RegisterRequest extends FormRequest
         ];
     }
 
-    public function failedValidation(Validator $validator)
+    /**public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'success'   => false,
             'message'   => 'Validation errors',
             'data'      => $validator->errors()
         ]));
-    }  
+    } 
+    */
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success'   => false,
+            'message'   => 'Validation errors ('.json_encode($validator->errors()).')',
+            'data'      => $validator->errors()
+        ]));
+    }
 }

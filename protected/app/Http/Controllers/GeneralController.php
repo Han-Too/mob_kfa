@@ -13,6 +13,7 @@ use App\Models\MerchantSignature;
 use App\Models\Outlet;
 use App\Models\OutletGroup;
 use App\Models\AddressList;
+use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Request;
@@ -25,6 +26,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use File;
+use Illuminate\Support\Facades\URL;
+use ZanySoft\Zip\Facades\Zip;
+use ZipArchive;
 
 class GeneralController extends Controller
 {
@@ -43,7 +48,7 @@ class GeneralController extends Controller
         $closedMerchant = Merchant::where('status_approval', 'Close')->where('dokumen_lengkap', true)->orderByDesc('created_at')->count();
         $newRequestMerchant = Merchant::where('status_approval', 'New Request')->where('dokumen_lengkap', true)->orderByDesc('created_at')->count();
 
-        
+
 
         return view('admin.dashboard', compact('totalMerchant', 'approvedMerchant', 'processMerchant', 'newMerchant', 'updatedMerchant', 'rejectedMerchant', 'closedMerchant', 'newRequestMerchant'));
     }
@@ -139,7 +144,7 @@ class GeneralController extends Controller
             $docs = DokumenApplicant::where('status', 'active')->where('type', $merchant->pengajuan_sebagai)->get();
             foreach ($docs as $key => $value) {
                 $merchantDocument = MerchantDocument::create([
-                    'token_applicant' =>  $merchant->token_applicant,
+                    'token_applicant' => $merchant->token_applicant,
                     'document_id' => $value->id,
                     'image' => 'http://cashlez.kreditekfa.co.id/images/170771473765c9a8b1a9d34.png',
                     'status_approval' => null,
@@ -171,7 +176,7 @@ class GeneralController extends Controller
     {
         $merchant = Merchant::with('branches')->where('token_applicant', $token_applicant)->first();
         $signature = MerchantSignature::where('token_applicant', $token_applicant)->pluck('image')->first();
-        
+
         $data = [
             'data' => $merchant,
             'signature' => $signature
@@ -244,7 +249,7 @@ class GeneralController extends Controller
         //     $responseData = json_decode($body, true);
 
         //     $data = $responseData["data"];
-            
+
         //     if ($data) {
         //         try {
         //             Bank::truncate();
@@ -937,7 +942,7 @@ class GeneralController extends Controller
             $responseData = json_decode($body, true);
 
             $data = $responseData["data"];
-            
+
             if ($data) {
                 try {
                     Outlet::truncate();
@@ -950,11 +955,11 @@ class GeneralController extends Controller
                     }
 
                     if ($data) {
-                        return  response()->json(['message' => "Successfully added categories!", 'status' => true], 201);
+                        return response()->json(['message' => "Successfully added categories!", 'status' => true], 201);
                     }
                 } catch (\Throwable $th) {
                     dd($th);
-                    return  response()->json(['message' => "Failed add categories!", 'status' => false], 200);
+                    return response()->json(['message' => "Failed add categories!", 'status' => false], 200);
                 }
             }
         } catch (RequestException $e) {
@@ -1094,7 +1099,7 @@ class GeneralController extends Controller
 
         ]';
         $array = json_decode($json, true);
-        
+
         foreach ($array as $key => $value) {
             OutletGroup::create([
                 'version' => $value["version"],
@@ -2151,7 +2156,7 @@ class GeneralController extends Controller
            ]
         ';
         $array = json_decode($json, true);
-        
+
         try {
             foreach ($array as $key => $value) {
                 Outlet::create([
@@ -2167,5 +2172,12 @@ class GeneralController extends Controller
         } catch (\Throwable $th) {
             dd($th);
         }
+    }
+
+    public function downloadZip($id)
+    {
+        $files = MerchantDocument::where('token_applicant', $id)->select('image')->first(); 
+        // Sesuaikan dengan field dan logika kamu
+        return response()->json($files);
     }
 }

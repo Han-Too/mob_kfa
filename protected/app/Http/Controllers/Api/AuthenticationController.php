@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\BackOffice;
 use App\Http\Controllers\RestController;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\LoginRequestMobile;
 use App\Http\Requests\RegisterRequest;
 use App\Mail\SendMail;
 use App\Models\PasswordReset as ModelsPasswordReset;
@@ -38,26 +39,24 @@ class AuthenticationController extends RestController
     public function register(RegisterRequest $request)
     {
         $username = isset($request->username) ? $request->username : '';
-
-        dd($request->all());
+        
 
         $salt = 'BtDMQ7RfNVoRzWGjS2DK';
         $bo_pin = BackOffice::encrypt($salt, $request->pin);
         $bo_password = BackOffice::encrypt($salt, $request->password);
-
         DB::beginTransaction();
         try {
             $check = User::where('username', $username)->first();
             // $check_email = User::where('email', $request->email)->first();
             // if ($check_email) {
-            //     return RestController::sendError('Email Sudah Terdaftar');
-            // }
-
-            if (strlen($request->username) > 30) {
+                //     return RestController::sendError('Email Sudah Terdaftar');
+                // }
+                
+                if (strlen($request->username) > 30) {
                 DB::rollBack();
                 return RestController::sendError('Username Maksimal 30 Karakter');
             }
-
+            
             if (!$check) {
                 $input = User::create([
                     'token' => Str::uuid(),
@@ -88,7 +87,7 @@ class AuthenticationController extends RestController
         }
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequestMobile $request)
     {
         if (!Auth::attempt($request->only('username', 'password'))) {
             return response()

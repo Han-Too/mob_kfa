@@ -67,6 +67,7 @@ class ApplicantController extends Controller
     {
         $user = Auth::user();
         $data = Merchant::with('user', 'workflow', 'payments')->where('token_applicant', $token)->first();
+        $tokenApp = $data->token_applicant;
         $documents = MerchantDocument::with('document')->where('token_applicant', $data->token_applicant)->orderByDesc('created_at')->get();
         $historyDocument = HistoryApproval::with('document')->where('token_applicant', $data->token_applicant)->where('flag', 'document')->where('user_id', $user->id)->orderBy('created_at')->get();
         $allDocHis = HistoryApproval::with('document')->where('token_applicant', $data->token_applicant)->where('flag', 'document')->orderByDesc('created_at')->get();
@@ -87,7 +88,7 @@ class ApplicantController extends Controller
         $layers = MasterLayer::where('status', '!=', 'deleted')->get();
 
         $detailHis = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'detail')->orderByDesc('created_at')->get();
-        return view('admin.applicants.show', compact('layers', 'allDocHis', 'sign', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
+        return view('admin.applicants.show', compact('tokenApp','layers', 'allDocHis', 'sign', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
     }
 
     public function documentUpdate(Request $request)

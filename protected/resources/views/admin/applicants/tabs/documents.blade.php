@@ -134,6 +134,56 @@
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#kt_modal_view_signature"
                                             class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button>
+                                        
+                                        <input type="hidden" id="userId" value="{{ $tokenApp }}">
+                                        <button type="button" id="downloadKabeh"
+                                            class="btn btn-sm fw-bolder btn-info mx-1">Download
+                                            All</button>
+
+                                        <script>
+                                            document.getElementById('downloadKabeh').addEventListener('click', async function() {
+                                                const userId = "{{ $tokenApp }}";
+                                                // const userId = document.getElementById('userId').value;
+                                                console.log(userId);
+
+                                                if (!userId) {
+                                                    alert('Please enter a User ID');
+                                                    return;
+                                                }
+
+                                                try {
+                                                    // Ambil link file dari server berdasarkan ID
+                                                    // const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/${userId}`);
+                                                    const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/935a5c7e-2f60-4e01-a90b-0792bad1d627`);
+                                                    if (!response.ok) throw new Error('Network response was not ok');
+
+                                                    const files = await response.json();
+                                                    console.log(files);
+
+                                                    for (const file of files) {
+                                                        try {
+                                                            const filePath = file.file_path; // Sesuaikan dengan struktur data yang diterima
+                                                            const fileResponse = await fetch(filePath);
+                                                            if (!fileResponse.ok) throw new Error('Network response was not ok');
+
+                                                            const blob = await fileResponse.blob();
+                                                            const url = window.URL.createObjectURL(blob);
+                                                            const a = document.createElement('a');
+                                                            a.style.display = 'none';
+                                                            a.href = url;
+                                                            a.download = filePath.split('/').pop(); // Mendapatkan nama file dari URL
+                                                            document.body.appendChild(a);
+                                                            a.click();
+                                                            window.URL.revokeObjectURL(url);
+                                                        } catch (error) {
+                                                            console.error('Error downloading file:', filePath, error);
+                                                        }
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Error fetching file links:', error);
+                                                }
+                                            });
+                                        </script>
                                         {{-- ///////////////////////////////////////////////////// --}}
                                     </div>
                                 </div>
