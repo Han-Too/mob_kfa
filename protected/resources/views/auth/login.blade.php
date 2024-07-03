@@ -110,7 +110,7 @@
                             <!--end::Input group-->
                             <!--begin::Actions-->
                             <div class="fv-row mb-10">
-                                <img src="{{ captcha_src("flat") }}" alt="captcha">
+                                <img src="{{ captcha_src() }}" alt="captcha">
                                 <div class="mt-2"></div>
                                 <input type="text" name="captcha"
                                     class="form-control @error('captcha') is-invalid @enderror"

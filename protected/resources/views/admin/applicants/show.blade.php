@@ -298,6 +298,7 @@
     </div>
     <!--end::Navbar-->
     @section('scripts')
+        <script src="{{ asset('tadmin/js/custom/applicant/updateDetail.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/index.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/custom.js') }}"></script>
         <script>

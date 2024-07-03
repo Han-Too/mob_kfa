@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('token_applicant')->nullable();
             $table->string('image')->nullable();
             $table->string('status')->nullable();
+            $table->string('status_approvals')->nullable();
+            $table->text('notes')->nullable();
+            $table->bigInteger('layer_id')->nullable();
+            $table->bigInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

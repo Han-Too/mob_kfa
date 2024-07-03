@@ -16,6 +16,11 @@ class HistoryApproval extends Model
         return $this->belongsTo(MerchantDocument::class, 'approval_id');
     }
 
+    public function signature()
+    {
+        return $this->belongsTo(MerchantSignature::class, 'approval_id');
+    }
+
     public function payment()
     {
         return $this->belongsTo(MerchantPayment::class, 'approval_id');

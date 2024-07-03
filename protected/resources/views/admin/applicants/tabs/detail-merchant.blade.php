@@ -1,498 +1,517 @@
 <div class="card p-5">
     <div class="card-body p-5 row">
-        <!--begin::Row-->
-        <div class="card-title fs-4 fw-bolder">Data Pemilik Usaha</div>
-        <div class="separator my-2"></div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nama Pemilik Merchant</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->nama_pemilik_merchant }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Jenis Kelamin</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->jenis_kelamin_pemilik }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Tempat, Tanggal Lahir</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->tempat_lahir . ', ' . date('d F Y', strtotime($data->tanggal_lahir)) }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Alamat Sesuai KTP</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->alamat_sesuai_ktp }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Alamat Domisili Saat Ini</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->alamat_domisili }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Kewarganegaraan</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->kewarganegaraan }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">E-mail</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->email }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nomor Identitas</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->nomor_identitas }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nomor Handphone</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->nomor_hp }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">NPWP</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->npwp }}" disabled />
-            </div>
-        </div>
-        <div class="card-title fs-4 fw-bolder">Data Pengurus Merchant (PIC)</div>
-        <div class="separator my-2"></div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nama Pengurus Merchant</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->nama_pengurus_merchant }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Jenis Kelamin</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->jenis_kelamin_pengurus }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Alamat</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->alamat_pejabat_berwenang }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Kewarganegaraan</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->kewarganegaraan_pengurus }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nomor Identitas</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->nomor_identitas_pengurus }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">E-mail</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->email_pengurus }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nomor Handphone</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->nomor_hp_pengurus }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Kewarganegaraan</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->kewarganegaraan }}"
-                    disabled />
-            </div>
-        </div>
-        {{-- @if ($data->pengajuan_sebagai == 'Perorangan')
-            @include('admin.applicants.tabs.perorangan')
-        @else
-            @include('admin.applicants.tabs.badan-usaha')
-        @endif --}}
-        <div class="card-title fs-4 fw-bolder">Data Merchant</div>
-        <div class="separator my-2"></div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nama Merchant</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->nama_merchant }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Pengajuan Sebagai</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->pengajuan_sebagai }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Tahun Berdiri</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->tahun_berdiri }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Jenis Usaha</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->jenis_usaha }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Tempat Usaha</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->tempat_bisnis }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Kategori Usaha</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->mcc }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Fitur Pembayaran </div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <div class="d-flex fw-bold h-100">
-                    @foreach ($data->payments as $payment)
-                        <div class="form-check form-check-custom form-check-solid me-9">
-                            <input class="form-check-input" type="checkbox" checked disabled />
-                            <label class="form-check-label ms-3">{{ $payment->payment }}</label>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Email Usaha</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->bisnis_email }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">No Telepon Usaha</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->bisnis_no_hp }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Alamat Usaha</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->alamat_bisnis }}"
-                    disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Latitude, Longitude</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->m_lat }}, {{ $data->m_lng }}" disabled />
-            </div>
-        </div>
-        @if ($data->pengajuan_sebagai == 'Badan Usaha')
+        <form action="" id="updateDetail_form" class=" px-3">
+            @csrf
+            <input type="hidden" value="{{ $data->token_applicant }}" name="token">
+            <!--begin::Row-->
+            <div class="card-title fs-4 fw-bolder">Data Pemilik Usaha</div>
+            <div class="separator my-2"></div>
             <div class="row mb-8">
                 <!--begin::Col-->
                 <div class="col-xl-3">
-                    <div class="fs-6 fw-bold mt-2 mb-3">NPWP Badan Usaha</div>
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nama Pemilik Merchant</div>
                 </div>
                 <!--end::Col-->
                 <!--begin::Col-->
                 <div class="col-xl-9 fv-row">
                     <input type="text" class="form-control form-control-solid"
-                        value="{{ $data->npwp_merchant_badan_usaha }}" disabled />
+                        value="{{ $data->nama_pemilik_merchant }}" disabled />
                 </div>
             </div>
-        @endif
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Store URL</div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Jenis Kelamin</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->jenis_kelamin_pemilik }}" disabled />
+                </div>
             </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->store_url }}"
-                    disabled />
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Tempat, Tanggal Lahir</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid border border-primary" name="ttl_milik"
+                        value="{{ $data->tempat_lahir . ', ' . date('d F Y', strtotime($data->tanggal_lahir)) }}" />
+                </div>
             </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Status Kepemilikan Usaha</div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Alamat Sesuai KTP</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid" value="{{ $data->alamat_sesuai_ktp }}"
+                        name="alamatktp_milik" />
+                </div>
             </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->status_tempat_usaha }}" disabled />
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Alamat Domisili Saat Ini</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid" value="{{ $data->alamat_domisili }}"
+                        name="alamatdomisili_milik" />
+                </div>
             </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Omset Per Bulan</div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Kewarganegaraan</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->kewarganegaraan }}"
+                        disabled />
+                </div>
             </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="Rp. {{ number_format((float) $data->omset_rata_rata) }}" disabled />
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">E-mail</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid" value="{{ $data->email }}"
+                        name="email_milik" />
+                </div>
             </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Sumber Data</div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nomor Identitas</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->nomor_identitas }}"
+                        disabled />
+                </div>
             </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->sumber_data }}"
-                    disabled />
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nomor Handphone</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->nomor_hp }}"
+                        disabled />
+                </div>
             </div>
-        </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">NPWP</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid" value="{{ $data->npwp }}"
+                        name="npwp_milik" />
+                </div>
+            </div>
+            <div class="card-title fs-4 fw-bolder">Data Pengurus Merchant (PIC)</div>
+            <div class="separator my-2"></div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nama Pengurus Merchant</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->nama_pengurus_merchant }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Jenis Kelamin</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->jenis_kelamin_pengurus }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Alamat</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid"
+                        value="{{ $data->alamat_pejabat_berwenang }}" name="alamat_pengurus" />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Kewarganegaraan</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->kewarganegaraan_pengurus }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nomor Identitas</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->nomor_identitas_pengurus }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">E-mail</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid"
+                        value="{{ $data->email_pengurus }}" name="email_pengurus" />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nomor Handphone</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->nomor_hp_pengurus }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Kewarganegaraan</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->kewarganegaraan }}" disabled />
+                </div>
+            </div>
+            {{-- @if ($data->pengajuan_sebagai == 'Perorangan')
+            @include('admin.applicants.tabs.perorangan')
+        @else
+            @include('admin.applicants.tabs.badan-usaha')
+        @endif --}}
+            <div class="card-title fs-4 fw-bolder">Data Merchant</div>
+            <div class="separator my-2"></div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nama Merchant</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->nama_merchant }}"
+                        disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Pengajuan Sebagai</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->pengajuan_sebagai }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Tahun Berdiri</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->tahun_berdiri }}"
+                        disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Jenis Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->jenis_usaha }}"
+                        disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Tempat Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->tempat_bisnis }}"
+                        disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Kategori Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->mcc }}"
+                        disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Fitur Pembayaran </div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <div class="d-flex fw-bold h-100">
+                        @foreach ($data->payments as $payment)
+                            <div class="form-check form-check-custom form-check-solid me-9">
+                                <input class="form-check-input" type="checkbox" checked disabled />
+                                <label class="form-check-label ms-3">{{ $payment->payment }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Email Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid" value="{{ $data->bisnis_email }}"
+                        name="email_usaha" />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">No Telepon Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->bisnis_no_hp }}"
+                        disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Alamat Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid" value="{{ $data->alamat_bisnis }}"
+                        name="alamat_usaha" />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Latitude, Longitude</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->m_lat }}, {{ $data->m_lng }}" disabled />
+                </div>
+            </div>
+            @if ($data->pengajuan_sebagai == 'Badan Usaha')
+                <div class="row mb-8">
+                    <!--begin::Col-->
+                    <div class="col-xl-3">
+                        <div class="fs-6 fw-bold mt-2 mb-3">NPWP Badan Usaha</div>
+                    </div>
+                    <!--end::Col-->
+                    <!--begin::Col-->
+                    <div class="col-xl-9 fv-row">
+                        <input type="text" class="form-control border border-primary form-control-solid"
+                            value="{{ $data->npwp_merchant_badan_usaha }}" name="npwp_badanusaha" />
+                    </div>
+                </div>
+            @endif
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Store URL</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    @if ($data->store_url != '')
+                        <input type="text" class="form-control form-control-solid" value="{{ $data->store_url }}"
+                            name="url_usaha" />
+                    @else
+                        <input type="text" class="form-control form-control-solid" value="{{ $data->store_url }}"
+                            disabled />
+                    @endif
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Status Kepemilikan Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->status_tempat_usaha }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Omset Per Bulan</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="Rp. {{ number_format((float) $data->omset_rata_rata) }}" disabled />
+                </div>
+            </div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Sumber Data</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->sumber_data }}"
+                        disabled />
+                </div>
+            </div>
 
-        <div class="card-title fs-4 fw-bolder">Data Bank</div>
-        <div class="separator my-2"></div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nama Bank</div>
+            <div class="card-title fs-4 fw-bolder">Data Bank</div>
+            <div class="separator my-2"></div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nama Bank</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid" value="{{ $data->nama_bank }}"
+                        disabled />
+                </div>
             </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->nama_bank }}"
-                    disabled />
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nomor Rekening Bank Penampung</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->nomor_rekening_bank_penampung }}" disabled />
+                </div>
             </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nomor Rekening Bank Penampung</div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nama Pemilik Rekening Merchant/Badan Usaha</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->nama_pemilik_rekening_merchant_badan_usaha }}" disabled />
+                </div>
             </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->nomor_rekening_bank_penampung }}" disabled />
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">E-mail Settlement</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control border border-primary form-control-solid"
+                        value="{{ $data->email_settlement }}" name="email_settle" />
+                </div>
             </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nama Pemilik Rekening Merchant/Badan Usaha</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid"
-                    value="{{ $data->nama_pemilik_rekening_merchant_badan_usaha }}" disabled />
-            </div>
-        </div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">E-mail Settlement</div>
-            </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->email_settlement }}"
-                    disabled />
-            </div>
-        </div>
 
 
-        <div class="card-title fs-4 fw-bolder">Data Sales</div>
-        <div class="separator my-2"></div>
-        <div class="row mb-8">
-            <!--begin::Col-->
-            <div class="col-xl-3">
-                <div class="fs-6 fw-bold mt-2 mb-3">Nama Sales</div>
+            <div class="card-title fs-4 fw-bolder">Data Sales</div>
+            <div class="separator my-2"></div>
+            <div class="row mb-8">
+                <!--begin::Col-->
+                <div class="col-xl-3">
+                    <div class="fs-6 fw-bold mt-2 mb-3">Nama Sales</div>
+                </div>
+                <!--end::Col-->
+                <!--begin::Col-->
+                <div class="col-xl-9 fv-row">
+                    <input type="text" class="form-control form-control-solid"
+                        value="{{ $data->user->referal_code }}" disabled />
+                </div>
             </div>
-            <!--end::Col-->
-            <!--begin::Col-->
-            <div class="col-xl-9 fv-row">
-                <input type="text" class="form-control form-control-solid" value="{{ $data->user->referal_code }}"
-                    disabled />
+
+            <div class="col-12 my-5">
+                <div class="d-grid gap-2">
+                    <button type="submit" id="updateData" class="btn btn-primary">
+                        Update Data
+                    </button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
 
@@ -601,24 +620,24 @@
     </div>
 </div>
 @push('script')
-<script>
-    function showMerchantSelect() {
-        var approvalStatus = document.getElementById("approvalMerchant");
-        var additionalSelect = document.getElementById("additionalMerchantSelect");
+    <script>
+        function showMerchantSelect() {
+            var approvalStatus = document.getElementById("approvalMerchant");
+            var additionalSelect = document.getElementById("additionalMerchantSelect");
 
-        var reason = document.getElementById("reason");
+            var reason = document.getElementById("reason");
 
-        if (approvalStatus.value === "Reject") {
-            additionalSelect.style.display = "block";
-        } else if (approvalStatus.value === "Approve") {
-            additionalSelect.style.display = "none";
-            additionalSelect.value = null
-            reason.value = '';
-        } else {
-            additionalSelect.style.display = "none";
-            reason.value = '';
-            additionalSelect.value = null
+            if (approvalStatus.value === "Reject") {
+                additionalSelect.style.display = "block";
+            } else if (approvalStatus.value === "Approve") {
+                additionalSelect.style.display = "none";
+                additionalSelect.value = null
+                reason.value = '';
+            } else {
+                additionalSelect.style.display = "none";
+                reason.value = '';
+                additionalSelect.value = null
+            }
         }
-    }
-</script>
+    </script>
 @endpush

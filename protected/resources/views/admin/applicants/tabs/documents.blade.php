@@ -134,7 +134,7 @@
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#kt_modal_view_signature"
                                             class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button>
-                                        
+
                                         <input type="hidden" id="userId" value="{{ $tokenApp }}">
                                         <button type="button" id="downloadKabeh"
                                             class="btn btn-sm fw-bolder btn-info mx-1">Download
@@ -154,7 +154,8 @@
                                                 try {
                                                     // Ambil link file dari server berdasarkan ID
                                                     // const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/${userId}`);
-                                                    const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/935a5c7e-2f60-4e01-a90b-0792bad1d627`);
+                                                    const response = await fetch(
+                                                        `http://127.0.0.1:8000/downloadKabeh/935a5c7e-2f60-4e01-a90b-0792bad1d627`);
                                                     if (!response.ok) throw new Error('Network response was not ok');
 
                                                     const files = await response.json();
@@ -259,15 +260,6 @@
                                 <div class="row mb-4 py-2">
                                     <!--begin::Col-->
                                     <div class="col-xl-4">
-                                        {{-- <div class="d-flex flex-column">
-                                            <div class="symbol symbol-100px symbol-2by3 cursor-pointer"
-                                                data-bs-toggle="modal" data-bs-target="#kt_modal_view_users"
-                                                onclick="handleImageClick('{{ $doc->image }}', 'Dokumen {{ App\Helpers\Utils::getDocumentTitle($doc->document_id) }}')">
-                                                <div class="symbol-label"
-                                                    style="background-image: url({{ $doc->image }})">
-                                                </div>
-                                            </div>
-                                        </div> --}}
                                         <div class="d-flex flex-column">
                                             @if ($doc->type == 'pdf')
                                                 {{-- @if (substr($url, -3) == 'pdf') --}}
@@ -325,11 +317,35 @@
                                     </div>
                                 </div>
                             </div>
-                            <!--end::Col-->
-                            <!--begin::Col-->
                             <div class="col-xl-8 fv-row">
-                                <div class="fs-6 fw-bold mt-2 mb-3">Merchant Signature</div>
+                                <div class="fs-6 fw-bold mt-2 mb-3">
+                                    Merchant Signature
+                                </div>
+                                <select name="statusSign" aria-label="Select Approval"
+                                    class="form-select form-select-sm form-select-solid documentSelect"
+                                    id="signSelect" onchange="clearSignNotes({{ $sign->id }})">
+                                    <option value="{{ $sign->status_approval }}">
+                                        {{ $sign->status_approval ? $sign->status_approval : '-- Select Approval --' }}
+                                    </option>
+                                    @if (Auth::user()->role_id == 1)
+                                        <option value="Verification">Verification</option>
+                                        <option value="Validation">Validation</option>
+                                        <option value="Reject">Reject</option>
+                                    @else
+                                        @if (App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id) == 2)
+                                            <option value="Verification">Verification
+                                            </option>
+                                            <option value="Reject">Reject</option>
+                                        @else
+                                            <option value="Validation">Validation</option>
+                                            <option value="Reject">Reject</option>
+                                        @endif
+                                    @endif
+                                </select>
+                                <textarea name="notesSign" class="form-control form-control-flush mb-3" rows="1" placeholder="Type a notes"
+                                    id="notesSignSelect">{{ $sign->notes }}</textarea>
                             </div>
+                            <!--end::Col-->
                         </div>
 
                         {{-- Summary Process --}}
@@ -435,8 +451,18 @@
                                     <div class="flex-grow-1 ms-2">
                                         <a href="#"
                                             class="fw-bolder text-gray-800 text-hover-primary fs-6">{{ $item->status }}</a>
+
+                                        @if(substr($item->approval_id,0,2) == "S-")
                                         <span
-                                            class="text-muted fw-bolder d-block">{{ $item->document ? App\Helpers\Utils::getDocumentTitle($item->document->document_id) : '' }}</span>
+                                            class="text-muted fw-bolder d-block">
+                                            Merchant Signature
+                                        </span>
+                                        @else
+                                        <span
+                                            class="text-muted fw-bolder d-block">
+                                            {{ $item->document ? App\Helpers\Utils::getDocumentTitle($item->document->document_id) : '' }}
+                                        </span>
+                                        @endif
                                         <span class="text-muted fw-bold d-block">{{ $item->notes }}</span>
                                         <span
                                             class="text-muted fw-bold d-block">{{ App\Helpers\Utils::getUserName($item->user_id) . '( ' . App\Helpers\Utils::getUserRole($item->user_id) . ' )' }}</span>
@@ -620,6 +646,13 @@
             var notesElement = document.getElementById("notesSelect_{{ $doc->id }}");
             notesElement.value = notes
         @endforeach
+        var SignElement = document.getElementById("signSelect");
+        SignElement.value = value;
+        var notesSignElement = document.getElementById("notesSignSelect");
+        notesSignElement.value = notes
+        // console.log(SignElement);
+        // console.log(notesSignElement);
+
         $('html, body').animate({
             scrollTop: $("#summaryProcess").offset().top
         }, 800);
@@ -654,6 +687,7 @@
 
         var additionalSelect = document.getElementById("additionalSelect");
         var reason = document.getElementById("reason");
+
         if (status.value == 'Reject') {
             approvalStatus.innerHTML = 'Reject'
             approvalStatusName.value = 'Reject'
@@ -666,8 +700,57 @@
             reason.value = '';
             notesElement.value = null
         }
+
+
+    }
+
+    function clearSignNotes(value) {
+        var hideRejectOptions = document.querySelectorAll('option.hideReject');
+        var checkAllSelect = document.querySelectorAll('select.documentSelect');
+        var hasReject = false;
+
+        checkAllSelect.forEach(function(select) {
+            if (select.value == 'Reject') {
+                hasReject = true;
+            }
+        });
+
+        checkAllSelect.forEach(function(select) {
+            hideRejectOptions.forEach(function(option) {
+                if (hasReject) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+        });
+
+        var approvalStatus = document.getElementById("select2-approvalStatus-container");
+        var approvalStatusName = document.getElementById("approvalStatus");
+
+        var additionalSelect = document.getElementById("additionalSelect");
+        var reason = document.getElementById("reason");
+
+        var notesSignElement = document.getElementById(`notesSignSelect`);
+        var statusSign = document.getElementById(`signSelect`);
+
+        if (statusSign.value == 'Reject') {
+            approvalStatus.innerHTML = 'Reject'
+            approvalStatusName.value = 'Reject'
+            additionalSelect.style.display = "block";
+            notesSignElement.value = 'Document has been rejected'
+        } else {
+            approvalStatus.innerHTML = '-- Select Recomendation --'
+            approvalStatusName.value = null
+            additionalSelect.style.display = "none";
+            reason.value = '';
+            notesSignElement.value = null
+        }
+
+
     }
 </script>
+
 
 <script>
     function handleImageClick(imageUrl, title) {

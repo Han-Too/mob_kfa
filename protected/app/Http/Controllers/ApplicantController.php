@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -59,7 +60,7 @@ class ApplicantController extends Controller
     public function status($status)
     {
         $sts = Utils::getStatusBySlug($status);
-                $data = Merchant::with('workflow')->where('status', '!=', 'deleted')->where('status_approval', $sts)->where('dokumen_lengkap', true)->orderByDesc('created_at')->get();
+        $data = Merchant::with('workflow')->where('status', '!=', 'deleted')->where('status_approval', $sts)->where('dokumen_lengkap', true)->orderByDesc('created_at')->get();
         return view('admin.applicants.index', compact('data'));
     }
 
@@ -70,7 +71,7 @@ class ApplicantController extends Controller
         $tokenApp = $data->token_applicant;
         $documents = MerchantDocument::with('document')->where('token_applicant', $data->token_applicant)->orderByDesc('created_at')->get();
         $historyDocument = HistoryApproval::with('document')->where('token_applicant', $data->token_applicant)->where('flag', 'document')->where('user_id', $user->id)->orderBy('created_at')->get();
-        $allDocHis = HistoryApproval::with('document')->where('token_applicant', $data->token_applicant)->where('flag', 'document')->orderByDesc('created_at')->get();
+        $allDocHis = HistoryApproval::with('document','signature')->where('token_applicant', $data->token_applicant)->where('flag', 'document')->orderByDesc('created_at')->get();
         $merchantApproval = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'merchant')->where('user_id', $user->id)->orderByDesc('created_at')->first();
         $historyApproval = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'merchant')->orderBy('created_at')->get();
         $historyApprovalDesc = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'merchant')->orderByDesc('created_at')->get();
@@ -80,7 +81,7 @@ class ApplicantController extends Controller
         $paymentApproval = HistoryApproval::with('payment')->where('token_applicant', $data->token_applicant)->where('flag', 'payment')->orderByDesc('created_at')->get();
 
         $approvals = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'merchant')->orderBy('created_at')->get();
-
+        //dd($approvals);
         $documentCompleation = Utils::documentCompleation($token);
         $documentApprovalCompleation = Utils::documentApprovalCompleation($token);
         $reason = Reason::where('status', 'active')->where('type', 'document')->get();
@@ -88,7 +89,50 @@ class ApplicantController extends Controller
         $layers = MasterLayer::where('status', '!=', 'deleted')->get();
 
         $detailHis = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'detail')->orderByDesc('created_at')->get();
-        return view('admin.applicants.show', compact('tokenApp','layers', 'allDocHis', 'sign', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
+        return view('admin.applicants.show', compact('tokenApp', 'layers', 'allDocHis', 'sign', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
+    }
+
+
+    public function detailUpdate(Request $request)
+    {
+        $user = Auth::user();
+        DB::beginTransaction();
+        try {
+            $merchant = Merchant::where('token_applicant', $request->token)->first();
+            
+            if ($request->npwp_merchant_badan_usaha != null) {
+                $merchant->npwp_merchant_badan_usaha = $request->npwp_merchant_badan_usaha;
+            }
+            $lahir = explode(',', $request->ttl_milik);
+
+            $up = Merchant::where('token_applicant', $request->token)->update([
+                "tempat_lahir" => $lahir[0],
+                "tanggal_lahir" => $lahir[1],
+                "alamat_sesuai_ktp" => $request->alamatktp_milik,
+                "alamat_domisili" => $request->alamatdomisili_milik,
+                "email" => $request->email_milik,
+                "npwp" => $request->npwp_milik,
+                "alamat_pejabat_berwenang" => $request->alamat_pengurus,
+                "email_pengurus" => $request->email_pengurus,
+                "bisnis_email" => $request->email_usaha,
+                "alamat_bisnis" => $request->alamat_usaha,
+                "email_settlement" => $request->email_settle,
+                "status" => "active"
+            ]);
+
+            if ($up) {
+                Utils::addHistory($request->token, "Update", "Update Data Merchant", 'detail', $merchant->id);
+                DB::commit();
+                return json_encode(['status' => true, 'message' => 'Success']);
+            }
+            DB::rollBack();
+            return json_encode(['status' => false, 'message' => 'Gagal Update Data Merchant!']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            // return json_encode(['status' => false, 'message' => 'Isi Semua Field!']);
+            Log::info($th);
+            return json_encode(['status' => false, 'message' => $th]);
+        }
     }
 
     public function documentUpdate(Request $request)
@@ -101,12 +145,12 @@ class ApplicantController extends Controller
                     if (!$request->status[$key]) {
                         $dId = MerchantDocument::where('id', $id)->pluck('document_id')->first();
                         $d = Utils::getDocumentTitle($dId);
-                        return json_encode(['status' => false, 'message' => $d.' Approval field mandatory!']);
+                        return json_encode(['status' => false, 'message' => $d . ' Approval field mandatory!']);
                     }
                     if (!$request->notes[$key]) {
                         $dId = MerchantDocument::where('id', $id)->pluck('document_id')->first();
                         $d = Utils::getDocumentTitle($dId);
-                        return json_encode(['status' => false, 'message' => $d.' Notes field mandatory!']);
+                        return json_encode(['status' => false, 'message' => $d . ' Notes field mandatory!']);
                     }
                 }
             }
@@ -151,7 +195,7 @@ class ApplicantController extends Controller
                 } else {
                     $notes_appr = $request->notes_approval;
                 }
-                Utils::addHistory($request->token, $request->status_approval, $notes_appr, 'merchant', $merchant->id,);
+                Utils::addHistory($request->token, $request->status_approval, $notes_appr, 'merchant', $merchant->id);
             }
 
             $status = $request->status_approval;
@@ -180,9 +224,18 @@ class ApplicantController extends Controller
                             ]);
                         Utils::addHistory($request->token, $statusDocument, $request->notes[$key], 'document', $id);
                     }
+                    $statusDocument = Utils::statusDocument($request->statusSign);
+                    MerchantSignature::where('token_applicant', $request->token)
+                        ->update([
+                            'status_approval' => $request->statusSign,
+                            'notes' => $request->notesSign,
+                            'updated_by' => $user->id,
+                            'layer_id' => $layer_id
+                        ]);
+                    Utils::addHistory($request->token, $statusDocument, $request->notesSign, 'document', "S-".$id);
                 }
             }
-            
+
             $data = Merchant::where('token_applicant', $request->token)->first();
             $app = Applicant::where('token_applicant', $request->token)->first();
 
@@ -193,7 +246,7 @@ class ApplicantController extends Controller
                     DB::rollBack();
                     return json_encode(['status' => false, 'message' => 'Gagal Registrasi Merchant ke Backoffice!']);
                 }
-        
+
             }
 
             if ($request->status_approval == 'Reject' || $request->status_approval == 'Close') {
@@ -214,7 +267,7 @@ class ApplicantController extends Controller
     public function addMerchantBO($token_applicant)
     {
         $usr = Merchant::where('token_applicant', $token_applicant)->pluck('user_id')->first();
-        
+
         $user = User::where('id', $usr)->first();
 
         try {
@@ -275,7 +328,7 @@ class ApplicantController extends Controller
                 } else {
                     $notes_appr = $request->notes_approval;
                 }
-                Utils::addHistory($request->token, $request->status_approval, $notes_appr, 'detail', $merchant->id,);
+                Utils::addHistory($request->token, $request->status_approval, $notes_appr, 'detail', $merchant->id);
             }
 
             DB::commit();
@@ -301,11 +354,11 @@ class ApplicantController extends Controller
             $endDate = date('Y-m-d', strtotime($dateRangeArray[1]));
 
             $data = MerchantPayment::with('merchant')->where('token_applicant', $token)->where('status', 'active')->orderByDesc('created_at')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderByDesc('created_at')
-            ->get();
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->orderByDesc('created_at')
+                ->get();
         } else {
-                $data = MerchantPayment::with('merchant')->where('token_applicant', $token)->where('status', 'active')->orderByDesc('created_at')
+            $data = MerchantPayment::with('merchant')->where('token_applicant', $token)->where('status', 'active')->orderByDesc('created_at')
                 ->get();
         }
 
@@ -367,16 +420,16 @@ class ApplicantController extends Controller
     public function updateBulk(Request $request)
     {
         if (!isset($request->id)) {
-            return  response()->json(['message' => "Payment Features Already Submitted!", 'status' => false], 200);
+            return response()->json(['message' => "Payment Features Already Submitted!", 'status' => false], 200);
         }
         foreach ($request->status_approval as $key => $value) {
             if (!$value) {
-                return  response()->json(['message' => "Recommendation can not be empty!", 'status' => false], 200);
+                return response()->json(['message' => "Recommendation can not be empty!", 'status' => false], 200);
             }
         }
         foreach ($request->notes_approval as $key => $value) {
             if (!$value) {
-                return  response()->json(['message' => "Notes can not be empty!", 'status' => false], 200);
+                return response()->json(['message' => "Notes can not be empty!", 'status' => false], 200);
             }
         }
         $user = Auth::user();
@@ -403,10 +456,10 @@ class ApplicantController extends Controller
                 }
             }
             DB::commit();
-            return  response()->json(['message' => "Successfully update payment!", 'status' => true], 201);
+            return response()->json(['message' => "Successfully update payment!", 'status' => true], 201);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return  response()->json(['message' => "Failed add payment! All field Mandatory!", 'status' => false], 200);
+            return response()->json(['message' => "Failed add payment! All field Mandatory!", 'status' => false], 200);
         }
     }
 
@@ -422,11 +475,11 @@ class ApplicantController extends Controller
             $endDate = date('Y-m-d', strtotime($dateRangeArray[1]));
 
             $data = MerchantBranch::with('merchant')->where('token_applicant', $token)->orderByDesc('created_at')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderByDesc('created_at')
-            ->get();
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->orderByDesc('created_at')
+                ->get();
         } else {
-                $data = MerchantBranch::with('merchant')->where('token_applicant', $token)->orderByDesc('created_at')
+            $data = MerchantBranch::with('merchant')->where('token_applicant', $token)->orderByDesc('created_at')
                 ->get();
         }
 
@@ -475,7 +528,7 @@ class ApplicantController extends Controller
         }
     }
 
-    public function export(Request $request, $slug) 
+    public function export(Request $request, $slug)
     {
         $dateRange = $request->query('dateRange');
 
@@ -485,6 +538,6 @@ class ApplicantController extends Controller
             $status = $slug;
         }
         $now = Carbon::now()->format('d-m-Y');
-        return Excel::download(new ApplicantExport($status, $dateRange), 'Cashlez MOB-'. $now .'.xlsx');
+        return Excel::download(new ApplicantExport($status, $dateRange), 'Cashlez MOB-' . $now . '.xlsx');
     }
-} 
+}
