@@ -109,7 +109,7 @@
                                 <div class="col-xl-12 fv-row">
                                     <div class="fs-6 fw-bold mb-3">Bulk Update</div>
                                     <div class="d-flex justify-content-start">
-                                        @if (Auth::user()->role_id == 1)
+                                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                             <button type="button"
                                                 onclick="bulkDocument('Verification', 'Document has been verified')"
                                                 class="btn btn-sm fw-bolder btn-primary mx-1">Verification</button>
@@ -131,9 +131,9 @@
                                             onclick="bulkDocument('Reject', 'Document has been rejected')"
                                             class="btn btn-sm fw-bolder btn-warning mx-1">Reject</button>
                                         {{-- ///////////////////////////////////////// --}}
-                                        <button type="button" data-bs-toggle="modal"
+                                        {{-- <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#kt_modal_view_signature"
-                                            class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button>
+                                            class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button> --}}
 
                                         <input type="hidden" id="userId" value="{{ $tokenApp }}">
                                         <button type="button" id="downloadKabeh"
@@ -235,7 +235,7 @@
                                             <option value="{{ $doc->status_approval }}">
                                                 {{ $doc->status_approval ? $doc->status_approval : '-- Select Approval --' }}
                                             </option>
-                                            @if (Auth::user()->role_id == 1)
+                                            @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                                 <option value="Verification">Verification</option>
                                                 <option value="Validation">Validation</option>
                                                 <option value="Reject">Reject</option>
@@ -327,7 +327,7 @@
                                     <option value="{{ $sign->status_approval }}">
                                         {{ $sign->status_approval ? $sign->status_approval : '-- Select Approval --' }}
                                     </option>
-                                    @if (Auth::user()->role_id == 1)
+                                    @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                         <option value="Verification">Verification</option>
                                         <option value="Validation">Validation</option>
                                         <option value="Reject">Reject</option>
@@ -539,7 +539,7 @@
         </div>
         <!--end::Modal dialog-->
     </div>
-    <div class="modal fade" id="kt_modal_view_signature" tabindex="-1" aria-hidden="true">
+    {{-- <div class="modal fade" id="kt_modal_view_signature" tabindex="-1" aria-hidden="true">
         <!--begin::Modal dialog-->
         <div class="modal-dialog modal-dialog-centered mw-800px">
             <!--begin::Modal content-->
@@ -590,7 +590,7 @@
             <!--end::Modal content-->
         </div>
         <!--end::Modal dialog-->
-    </div>
+    </div> --}}
     <!--end::Modal - View Users-->
 @endif
 

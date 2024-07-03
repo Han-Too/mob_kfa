@@ -123,7 +123,7 @@
                 <!--begin::Col-->
                 <div class="col-xl-9 fv-row">
                     <input type="text" class="form-control border border-primary form-control-solid" value="{{ $data->npwp }}"
-                        name="npwp_milik" />
+                        name="npwp_milik" maxlength="16"/>
                 </div>
             </div>
             <div class="card-title fs-4 fw-bolder">Data Pengurus Merchant (PIC)</div>
@@ -379,7 +379,7 @@
                     <!--begin::Col-->
                     <div class="col-xl-9 fv-row">
                         <input type="text" class="form-control border border-primary form-control-solid"
-                            value="{{ $data->npwp_merchant_badan_usaha }}" name="npwp_badanusaha" />
+                            value="{{ $data->npwp_merchant_badan_usaha }}" maxlength="16" name="npwp_badanusaha" />
                     </div>
                 </div>
             @endif

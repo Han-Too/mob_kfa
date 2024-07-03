@@ -366,9 +366,13 @@ class MerchantController extends RestController
     public function documents(Request $request)
     {
         $merchant = Merchant::where('token_applicant', $request->token_applicant)->first();
+
         if ($merchant) {
             $documents = MerchantDocument::with('document')->where('token_applicant', $request->token_applicant)->get();
-            return RestController::sendResponse('List dokumen pengajuan merchant', $documents);
+            $signature = MerchantSignature::where('token_applicant', $request->token_applicant)->get();
+            $data = $documents->merge($signature);
+            // dd($documents);
+            return RestController::sendResponse('List dokumen pengajuan merchant', $data);
         }
         return RestController::sendError('Data merchant tidak ditemukan');
     }
@@ -577,6 +581,16 @@ class MerchantController extends RestController
         } catch (\Throwable $th) {
             DB::rollBack();
             return RestController::sendError("Gagal tambah merchant");
+        }
+    }
+
+    public function checkSignature($id)
+    {
+        try {
+            $signature = MerchantSignature::where("token_applicant", $id)->select("image", "status_approval", "notes")->first();
+            return RestController::sendResponse('Berhasil Mendapatkan Data', $signature);
+        } catch (\Throwable $th) {
+            dd($th);
         }
     }
 }

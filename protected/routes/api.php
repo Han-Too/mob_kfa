@@ -60,6 +60,8 @@ Route::middleware(['api_key'])->group(function(){
         Route::get('merchant/show/{token}', [MerchantController::class, 'show']);
         Route::post('merchant/update', [MerchantController::class, 'update']);
 
+        Route::get('merchant/checksignature/{id}', [MerchantController::class, 'checkSignature']);
+
         // branch
         Route::get('merchant/branch/{token}', [MerchantController::class, 'branchList']);
         Route::post('merchant/branch', [MerchantController::class, 'branchStore']);
