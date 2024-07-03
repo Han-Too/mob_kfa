@@ -1,0 +1,4 @@
+images/*
+protected/vendor/
+protected/node_modules_bu/
+protected/composer_bu.json
