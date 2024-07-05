@@ -42,7 +42,7 @@
                                     <!--end::Select-->
                                 </div>
                             </div>
-                            <textarea name="notes_approval[]" class="form-control form-control-flush mb-3 mt-3 border" rows="3"
+                            <textarea name="notes_approval[]" class="form-control border border-primary form-control-flush mb-3 mt-3 " rows="3"
                                 placeholder="Type a notes"></textarea>
                             <div class="separator my-2"></div>
                         @else
@@ -57,7 +57,7 @@
                                     <!--end::Select-->
                                 </div>
                             </div>
-                            <textarea class="form-control form-control-flush mb-3 mt-3 border" rows="3" disabled>{{ $pay->notes }}</textarea>
+                            <textarea class="form-control border border-primary form-control-flush mb-3 mt-3 " rows="3" disabled>{{ $pay->notes }}</textarea>
                             <div class="separator my-2"></div>
                         @endif
                     @endforeach

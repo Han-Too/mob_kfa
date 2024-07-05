@@ -151,6 +151,10 @@ class Merchant extends Model
     {
         return $this->hasMany(MerchantPayment::class, 'token_applicant', 'token_applicant')->where('status', 'active');
     }
+    // public function signature()
+    // {
+    //     return $this->hasMany(MerchantSignature::class, 'token_applicant', 'token_applicant')->where('status', 'active');
+    // }
 
     public function documents()
     {

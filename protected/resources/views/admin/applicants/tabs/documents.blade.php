@@ -49,7 +49,7 @@
                                         <option value="{{ $doc->status_approval }}">{{ $doc->status_approval }}
                                         </option>
                                     </select>
-                                    <textarea class="form-control form-control-flush mb-3" rows="1" disabled>{{ $doc->notes }}</textarea>
+                                    <textarea class="form-control border border-primary form-control-flush mb-3" rows="1" disabled>{{ $doc->notes }}</textarea>
                                 </div>
                             </div>
                         @endforeach
@@ -79,7 +79,7 @@
                                         @endforeach
                                     </select>
                                 </div> --}}
-                                <textarea name="notes_approval" class="form-control form-control-flush mb-3" rows="1" placeholder="Type a notes"></textarea>
+                                <textarea name="notes_approval" class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"></textarea>
                             </div>
                             <div class="d-flex justify-content-end pt-7">
                                 <button type="submit" class="btn btn-sm fw-bolder btn-primary">Save
@@ -96,13 +96,14 @@
                                             {{ $merchantApproval->status == 'Approve' ? 'Approved by Bank' : $merchantApproval->status }}
                                         </option>
                                     </select>
-                                    <textarea name="notes_approval" disabled class="form-control form-control-flush mb-3" rows="1"
+                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3" rows="1"
                                         placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
                                 </div>
                             @endif
                         @endif
                     @else
                         @if (Auth::user()->role_id == 1 ||
+                                Auth::user()->role_id == 7 ||
                                 $data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
                             <div class="row mb-4 py-2">
                                 <!--begin::Col-->
@@ -142,8 +143,7 @@
 
                                         <script>
                                             document.getElementById('downloadKabeh').addEventListener('click', async function() {
-                                                const userId = "{{ $tokenApp }}";
-                                                // const userId = document.getElementById('userId').value;
+                                                const userId = document.getElementById('userId').value;
                                                 console.log(userId);
 
                                                 if (!userId) {
@@ -154,32 +154,69 @@
                                                 try {
                                                     // Ambil link file dari server berdasarkan ID
                                                     // const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/${userId}`);
-                                                    const response = await fetch(
-                                                        `http://127.0.0.1:8000/downloadKabeh/935a5c7e-2f60-4e01-a90b-0792bad1d627`);
-                                                    if (!response.ok) throw new Error('Network response was not ok');
+                                                    const myHeaders = new Headers();
+                                                    myHeaders.append("C-API-KEY", "C56c5f91b-Ae3fb-S42a3-H87c0-L39d7a8f3cd36EZ");
 
-                                                    const files = await response.json();
-                                                    console.log(files);
+                                                    const requestOptions = {
+                                                        method: "GET",
+                                                        headers: myHeaders,
+                                                        redirect: "follow"
+                                                    };
 
-                                                    for (const file of files) {
-                                                        try {
-                                                            const filePath = file.file_path; // Sesuaikan dengan struktur data yang diterima
-                                                            const fileResponse = await fetch(filePath);
-                                                            if (!fileResponse.ok) throw new Error('Network response was not ok');
+                                                    // const response = fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions);
+                                                    // if (!response.ok) throw new Error('Network response was not ok');
 
-                                                            const blob = await fileResponse.blob();
-                                                            const url = window.URL.createObjectURL(blob);
-                                                            const a = document.createElement('a');
-                                                            a.style.display = 'none';
-                                                            a.href = url;
-                                                            a.download = filePath.split('/').pop(); // Mendapatkan nama file dari URL
-                                                            document.body.appendChild(a);
-                                                            a.click();
-                                                            window.URL.revokeObjectURL(url);
-                                                        } catch (error) {
-                                                            console.error('Error downloading file:', filePath, error);
-                                                        }
-                                                    }
+                                                    fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions)
+                                                        .then(res => res.json())
+                                                        .then(data => {
+                                                            obj = data;
+                                                        })
+                                                        .then(() => {
+                                                            // console.log(obj);
+                                                            const files = obj.data;
+                                                            const arrayLen = Object.getOwnPropertyNames(obj.data).length;
+                                                            // console.log(files);
+
+                                                            for (const file of files) {
+                                                                try {
+                                                                    var filesForDownload = [];
+
+                                                                    // foreach (obj.data as data){
+                                                                    for (var i = 0; i < arrayLen; i++) {
+                                                                        filesForDownload({
+                                                                            path: obj.data[i],
+                                                                            name: obj.data[i].replace(`https://mob.cashlez.com/images/`,
+                                                                                '')
+                                                                        });
+                                                                    }
+
+                                                                    document.getElementById('downloadKabeh').addEventListener('click', function(
+                                                                        e) {
+                                                                        e.preventDefault();
+
+                                                                        var temporaryDownloadLink = document.createElement("a");
+                                                                        temporaryDownloadLink.style.display = 'none';
+
+                                                                        document.body.appendChild(temporaryDownloadLink);
+
+                                                                        for (var n = 0; n < filesForDownload.length; n++) {
+                                                                            var download = filesForDownload[n];
+                                                                            temporaryDownloadLink.setAttribute('href', download.path);
+                                                                            temporaryDownloadLink.setAttribute('download', download
+                                                                                .name);
+
+                                                                            temporaryDownloadLink.click();
+                                                                        }
+
+                                                                        document.body.removeChild(temporaryDownloadLink);
+                                                                    });
+                                                                } catch (error) {
+                                                                    console.error('Error downloading file:', filePath, error);
+                                                                }
+                                                            }
+                                                        });
+
+
                                                 } catch (error) {
                                                     console.error('Error fetching file links:', error);
                                                 }
@@ -250,7 +287,7 @@
                                                 @endif
                                             @endif
                                         </select>
-                                        <textarea name="notes[]" class="form-control form-control-flush mb-3" rows="1" placeholder="Type a notes"
+                                        <textarea name="notes[]" class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"
                                             id="notesSelect_{{ $doc->id }}">{{ $doc->notes }}</textarea>
                                     </div>
                                 </div>
@@ -300,7 +337,7 @@
                                                 <option value="Reject">Reject</option>
                                             @endif
                                         </select>
-                                        <textarea name="notes[]" disabled class="form-control form-control-flush mb-3" rows="1"
+                                        <textarea name="notes[]" disabled class="form-control border border-primary form-control-flush mb-3" rows="1"
                                             placeholder="Type a notes">{{ $doc->notes }}</textarea>
                                     </div>
                                 </div>
@@ -342,7 +379,7 @@
                                         @endif
                                     @endif
                                 </select>
-                                <textarea name="notesSign" class="form-control form-control-flush mb-3" rows="1" placeholder="Type a notes"
+                                <textarea name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"
                                     id="notesSignSelect">{{ $sign->notes }}</textarea>
                             </div>
                             <!--end::Col-->
@@ -350,6 +387,7 @@
 
                         {{-- Summary Process --}}
                         @if (Auth::user()->role_id == 1 ||
+                                Auth::user()->role_id == 7 ||
                                 $data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
 
                             <div class="col-xl-12 fv-row" id="summaryProcess">
@@ -358,7 +396,7 @@
                                     aria-label="Select Recomendation" data-control="select2"
                                     class="form-select form-select-sm form-select-solid">
                                     <option value="">-- Select Recomendation --</option>
-                                    @if (Auth::user()->role_id == 1)
+                                    @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                         <option value="Verification" class="hideReject">Verification</option>
                                         <option value="Validation" class="hideReject">Validation</option>
                                         <option value="Approve" class="hideReject">Approve by Bank</option>
@@ -390,7 +428,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <textarea name="notes_approval" class="form-control form-control-flush mb-3" rows="1"
+                                <textarea name="notes_approval" class="form-control border border-primary form-control-flush mb-3" rows="1"
                                     placeholder="Type a notes"></textarea>
                             </div>
                             <div class="d-flex justify-content-end pt-7">
@@ -408,7 +446,7 @@
                                             {{ $merchantApproval->status }}
                                         </option>
                                     </select>
-                                    <textarea name="notes_approval" disabled class="form-control form-control-flush mb-3" rows="1"
+                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3" rows="1"
                                         placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
                                 </div>
                             @endif
@@ -452,146 +490,149 @@
                                         <a href="#"
                                             class="fw-bolder text-gray-800 text-hover-primary fs-6">{{ $item->status }}</a>
 
-                                        @if(substr($item->approval_id,0,2) == "S-")
-                                        <span
-                                            class="text-muted fw-bolder d-block">
-                                            Merchant Signature
-                                        </span>
+                                        @if (substr($item->approval_id, 0, 2) == 'S-')
+                                            <span class="text-muted fw-bolder d-block">
+                                                Merchant Signature
+                                            </span>
                                         @else
-                                        <span
-                                            class="text-muted fw-bolder d-block">
-                                            {{ $item->document ? App\Helpers\Utils::getDocumentTitle($item->document->document_id) : '' }}
-                                        </span>
+                                            <span class="text-muted fw-bolder d-block">
+                                                {{ $item->document ? App\Helpers\Utils::getDocumentTitle($item->document->document_id) : '' }}
+                                            </span>
                                         @endif
                                         <span class="text-muted fw-bold d-block">{{ $item->notes }}</span>
-                                        <span
-                                            class="text-muted fw-bold d-block">{{ App\Helpers\Utils::getUserName($item->user_id) . '( ' . App\Helpers\Utils::getUserRole($item->user_id) . ' )' }}</span>
-                                    </div>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Item-->
-                            @endforeach
-
+                                        <span class="text-muted fw-bold d-block">
+                                            @if (Auth::user()->role_id == 7)
+                                                {{ App\Helpers\Utils::getUserName($item->user_id) . '( Dewa )' }}
+                                        </span>
+                                    @else
+                                        {{ App\Helpers\Utils::getUserName($item->user_id) . '( ' . App\Helpers\Utils::getUserRole($item->user_id) . ' )' }}</span>
+                            @endif
                         </div>
-                    @else
-                        <span class="fw-bolder fs-4 mb-2 text-muted">History is empty</span>
-
-                    @endif
-                    <!--end::Timeline-->
-                </div>
-                <!--end: Card Body-->
-            </div>
-            <!--end: List Widget 5-->
-        </div>
-        <!--end::Col-->
-    </div>
-
-    <!--begin::Modal - View Users-->
-    <div class="modal fade" id="kt_modal_view_users" tabindex="-1" aria-hidden="true">
-        <!--begin::Modal dialog-->
-        <div class="modal-dialog mw-800px">
-            <!--begin::Modal content-->
-            <div class="modal-content">
-                <!--begin::Modal header-->
-                <div class="modal-header pb-0 border-0 justify-content-end">
-                    <!--begin::Close-->
-                    <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                        <span class="svg-icon svg-icon-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none">
-                                <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-                                    transform="rotate(-45 6 17.3137)" fill="black" />
-                                <rect x="7.41422" y="6" width="16" height="2" rx="1"
-                                    transform="rotate(45 7.41422 6)" fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                    </div>
-                    <!--end::Close-->
-                </div>
-                <!--begin::Modal header-->
-                <!--begin::Modal body-->
-                <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
-                    <!--begin::Heading-->
-                    <div class="text-center mb-13">
-                        <!--begin::Title-->
-                        <h1 class="mb-3" id="docTitle"></h1>
                         <!--end::Title-->
-                    </div>
-                    <!--end::Heading-->
-                    <!--begin::Users-->
-                    <div class="mb-10  text-center">
-                        <!--begin::List-->
-                        <div class="mh-375px me-n7 pe-7  text-center">
-                            <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
-                                <img src="" alt="" id="modalImage"
-                                    class="mh-400px mw-600px text-center">
-                            </a>
-                        </div>
-                        <!--end::List-->
-                    </div>
-                    <!--end::Users-->
                 </div>
-                <!--end::Modal body-->
+                <!--end::Item-->
+@endforeach
+
+</div>
+@else
+<span class="fw-bolder fs-4 mb-2 text-muted">History is empty</span>
+
+@endif
+<!--end::Timeline-->
+</div>
+<!--end: Card Body-->
+</div>
+<!--end: List Widget 5-->
+</div>
+<!--end::Col-->
+</div>
+
+<!--begin::Modal - View Users-->
+<div class="modal fade" id="kt_modal_view_users" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-800px modal-dialog-centered">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
+                                transform="rotate(-45 6 17.3137)" fill="black" />
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1"
+                                transform="rotate(45 7.41422 6)" fill="black" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Close-->
             </div>
-            <!--end::Modal content-->
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3" id="docTitle"></h1>
+                    <!--end::Title-->
+                </div>
+                <!--end::Heading-->
+                <!--begin::Users-->
+                <div class="mb-10  text-center">
+                    <!--begin::List-->
+                    <div class="mh-375px me-n7 pe-7  text-center">
+                        <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
+                            <img src="" alt="" id="modalImage"
+                                class="mh-400px mw-600px text-center">
+                        </a>
+                    </div>
+                    <!--end::List-->
+                </div>
+                <!--end::Users-->
+            </div>
+            <!--end::Modal body-->
         </div>
-        <!--end::Modal dialog-->
+        <!--end::Modal content-->
     </div>
-    {{-- <div class="modal fade" id="kt_modal_view_signature" tabindex="-1" aria-hidden="true">
-        <!--begin::Modal dialog-->
-        <div class="modal-dialog modal-dialog-centered mw-800px">
-            <!--begin::Modal content-->
-            <div class="modal-content">
-                <!--begin::Modal header-->
-                <div class="modal-header pb-0 border-0 justify-content-end">
-                    <!--begin::Close-->
-                    <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                        <span class="svg-icon svg-icon-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none">
-                                <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-                                    transform="rotate(-45 6 17.3137)" fill="black" />
-                                <rect x="7.41422" y="6" width="16" height="2" rx="1"
-                                    transform="rotate(45 7.41422 6)" fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                    </div>
-                    <!--end::Close-->
+    <!--end::Modal dialog-->
+</div>
+<div class="modal fade" id="kt_modal_view_signature" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-800px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
+                                transform="rotate(-45 6 17.3137)" fill="black" />
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1"
+                                transform="rotate(45 7.41422 6)" fill="black" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
                 </div>
-                <!--begin::Modal header-->
-                <!--begin::Modal body-->
-                <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
-                    <!--begin::Heading-->
-                    <div class="text-center mb-13">
-                        <!--begin::Title-->
-                        <h1 class="mb-3">Merchant Signature</h1>
-                        <!--end::Title-->
-                    </div>
-                    <!--end::Heading-->
-                    <!--begin::Users-->
-                    <div class="mb-10  text-center">
-                        <!--begin::List-->
-                        <div class="mh-375px me-n7 pe-7  text-center">
-                            <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
-                                <img src="{{ $sign->image }}" alt="" id="modalImage"
-                                    class="mh-400px mw-600px text-center">
-                            </a>
-                        </div>
-                        <!--end::List-->
-                    </div>
-                    <!--end::Users-->
-                </div>
-                <!--end::Modal body-->
+                <!--end::Close-->
             </div>
-            <!--end::Modal content-->
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Merchant Signature</h1>
+                    <!--end::Title-->
+                </div>
+                <!--end::Heading-->
+                <!--begin::Users-->
+                <div class="mb-10  text-center">
+                    <!--begin::List-->
+                    <div class="mh-375px me-n7 pe-7  text-center">
+                        <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
+                            <img src="{{ $sign->image }}" alt="" id="modalImage"
+                                class="mh-400px mw-600px text-center">
+                        </a>
+                    </div>
+                    <!--end::List-->
+                </div>
+                <!--end::Users-->
+            </div>
+            <!--end::Modal body-->
         </div>
-        <!--end::Modal dialog-->
-    </div> --}}
-    <!--end::Modal - View Users-->
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - View Users-->
 @endif
 
 <script>
@@ -611,6 +652,7 @@
         var reason = document.getElementById("reason");
 
         if (approvalStatus.value === "Reject") {
+            // alert(approvalStatus.value);
             additionalSelect.style.display = "block";
             if (layer_id == 3) {
                 tidInput.style.display = "none";
@@ -623,9 +665,6 @@
                 tidInput.style.display = "block";
                 midInput.style.display = "block";
             }
-            // additionalSelect.style.display = "none";
-            // additionalSelect.value = null
-            // reason.value = '';
         } else {
             additionalSelect.style.display = "none";
             reason.value = '';
@@ -640,12 +679,40 @@
     }
 
     function bulkDocument(value, notes) {
+
+        var approvalStatus = document.getElementById("approvalStatus");
+        var additionalSelect = document.getElementById("additionalSelect");
+        var containerStatus = document.getElementById("select2-approvalStatus-container");
+        var reason = document.getElementById("reason");
+
+        if (value == "Reject") {
+            containerStatus.innerHTML = 'Reject'
+            approvalStatus.value = 'Reject'
+            additionalSelect.style.display = "block";
+        } else if (value == "Verification") {
+            containerStatus.innerHTML = 'Verification'
+            approvalStatus.value = 'Verification'
+            additionalSelect.style.display = "none"
+            reason.value = '';
+        } else if (value == "Validation") {
+            containerStatus.innerHTML = 'Validation'
+            approvalStatus.value = 'Validation'
+            additionalSelect.style.display = "none"
+            reason.value = '';
+        } else {
+            containerStatus.innerHTML = '-- Select Recomendation --'
+            approvalStatus.value = null
+            additionalSelect.style.display = "none"
+            reason.value = '';
+        }
+
         @foreach ($documents as $doc)
             var selectElement = document.getElementById("statusSelect_{{ $doc->id }}");
             selectElement.value = value;
             var notesElement = document.getElementById("notesSelect_{{ $doc->id }}");
             notesElement.value = notes
         @endforeach
+
         var SignElement = document.getElementById("signSelect");
         SignElement.value = value;
         var notesSignElement = document.getElementById("notesSignSelect");

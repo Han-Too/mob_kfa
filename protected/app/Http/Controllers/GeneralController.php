@@ -27,6 +27,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use File;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\URL;
 use ZanySoft\Zip\Facades\Zip;
 use ZipArchive;
@@ -2174,10 +2175,16 @@ class GeneralController extends Controller
         }
     }
 
-    public function downloadZip($id)
+    public function download($id)
     {
-        $files = MerchantDocument::where('token_applicant', $id)->select('image')->first(); 
-        // Sesuaikan dengan field dan logika kamu
-        return response()->json($files);
+        $data = MerchantSignature::where('id', $id)->first();
+        $image = substr($data->image, 23);
+        // dd($data->image);
+        // return response()->download(base_path().$image);
+        // return response()->streamDownload(function () {
+        //     echo file_get_contents();
+        // }, 'image-url-for-testing.jpg');
+        return response()->download($data->image, 'image.png');
+
     }
 }

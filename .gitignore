@@ -1,4 +1,10 @@
 images/*
-protected/vendor/
+protected/public/css
+protected/public/files
+protected/public/images2
+protected/public/js
+protected/public/tadmin
+protected/public/storage
+# protected/vendor/
 protected/node_modules_bu/
 protected/composer_bu.json

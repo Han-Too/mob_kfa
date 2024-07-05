@@ -217,7 +217,7 @@
                                     aria-valuemax="100"></div>
                             </div>
                         </div>
-                        @if (Auth::user()->role_id == 1)
+                        {{-- @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                             <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
                                 <div class="d-flex justify-content-between w-100 mt-auto">
                                     <span class="fw-bold fs-6 text-gray">Assign Layer</span>
@@ -233,7 +233,7 @@
                                     </select>
                                 </div>
                             </div>
-                        @endif
+                        @endif --}}
 
                     </div>
                     <!--end::Progress-->

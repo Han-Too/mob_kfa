@@ -225,6 +225,15 @@ class ApplicantController extends Controller
                         Utils::addHistory($request->token, $statusDocument, $request->notes[$key], 'document', $id);
                     }
                     $statusDocument = Utils::statusDocument($request->statusSign);
+
+                    if($request->statusSign == "Reject"){
+                        Merchant::where('token_applicant', $request->token)
+                        ->update([
+                            'status_tanda_tangan' => 2,
+                            'status_approval' => $request->statusSign
+                        ]);
+                    }
+                    
                     MerchantSignature::where('token_applicant', $request->token)
                         ->update([
                             'status_approval' => $request->statusSign,
