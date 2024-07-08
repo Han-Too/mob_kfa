@@ -109,7 +109,7 @@
                             <x-input-error :messages="$errors->get('username')" />
                             <!--end::Input group-->
                             <!--begin::Actions-->
-                            <div class="fv-row mb-10">
+                            {{-- <div class="fv-row mb-10">
                                 <img src="{{ captcha_src() }}" alt="captcha">
                                 <div class="mt-2"></div>
                                 <input type="text" name="captcha"
@@ -118,7 +118,7 @@
                                 @error('captcha')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="text-center">
                                 <!--begin::Submit button-->

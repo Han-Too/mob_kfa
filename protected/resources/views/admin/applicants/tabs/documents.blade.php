@@ -1,3 +1,9 @@
+{{-- @php
+    
+var_dump($data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id));
+die();
+@endphp --}}
+
 @if (count($documents) < 1)
     <div class="card-title fs-4 fw-bolder text-center">Data not found.</div>
 @else
@@ -13,7 +19,7 @@
                     enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="token" value="{{ $data->token_applicant }}">
-                    @if (Auth::user()->role_id == 5)
+                    @if (Auth::user()->role_id == 5 || Auth::user()->role_id == 7)
                         @foreach ($documents as $doc)
                             <div class="row mb-4 py-2">
                                 <!--begin::Col-->
@@ -53,6 +59,35 @@
                                 </div>
                             </div>
                         @endforeach
+                        
+                            <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
+                                <!--begin::Col-->
+                                <div class="col-xl-4">
+                                    <div class="d-flex flex-column">
+                                        <div class="symbol symbol-100px symbol-2by3 cursor-pointer"
+                                            data-bs-toggle="modal" data-bs-target="#kt_modal_view_signature">
+                                            <div class="symbol-label"
+                                                style="background-image: url({{ $sign->image }})">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-8 fv-row">
+                                    <div class="fs-6 fw-bold mt-2 mb-3">
+                                        Merchant Signature
+                                    </div>
+                                    <select name="statusSign" aria-label="Select Approval"
+                                        class="form-select form-select-sm form-select-solid documentSelect"
+                                        id="signSelect" onchange="clearSignNotes({{ $sign->id }})" disabled>
+                                        <option value="{{ $sign->status_approval }}">
+                                            {{ $sign->status_approval }}
+                                        </option>
+                                    </select>
+                                    <textarea name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                        placeholder="Type a notes" id="notesSignSelect">{{ $sign->notes }}</textarea>
+                                </div>
+                                <!--end::Col-->
+                            </div>
                         @if ($data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
 
                             <div class="col-xl-12 fv-row">
@@ -69,17 +104,8 @@
                                     class="form-control form-control-solid mt-3" placeholder="TID" autocomplete="off" />
                                 <input style="display: none" id="settingMid" type="text" name="status_setting_mid"
                                     class="form-control form-control-solid mt-3" placeholder="MID" autocomplete="off" />
-                                {{-- <div style="display: none" class="select_reason" id="additionalSelect">
-                                    <select id="reason" name="reason" aria-label="Pilih Alasan"
-                                        data-control="select2"
-                                        class="form-select form-select-sm form-select-solid mt-2">
-                                        <option value="">-- Pilih Alasan --</option>
-                                        @foreach ($reason as $item)
-                                            <option value="{{ $item->title }}">{{ $item->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> --}}
-                                <textarea name="notes_approval" class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"></textarea>
+                                <textarea name="notes_approval" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                    placeholder="Type a notes"></textarea>
                             </div>
                             <div class="d-flex justify-content-end pt-7">
                                 <button type="submit" class="btn btn-sm fw-bolder btn-primary">Save
@@ -96,8 +122,8 @@
                                             {{ $merchantApproval->status == 'Approve' ? 'Approved by Bank' : $merchantApproval->status }}
                                         </option>
                                     </select>
-                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3" rows="1"
-                                        placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
+                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3"
+                                        rows="1" placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
                                 </div>
                             @endif
                         @endif
@@ -137,9 +163,9 @@
                                             class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button> --}}
 
                                         <input type="hidden" id="userId" value="{{ $tokenApp }}">
-                                        <button type="button" id="downloadKabeh"
+                                        {{-- <button type="button" id="downloadKabeh"
                                             class="btn btn-sm fw-bolder btn-info mx-1">Download
-                                            All</button>
+                                            All</button> --}}
 
                                         <script>
                                             document.getElementById('downloadKabeh').addEventListener('click', async function() {
@@ -226,6 +252,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             @foreach ($documents as $doc)
                                 <input type="hidden" name="id[]" value="{{ $doc->id }}">
                                 <div class="row mb-4 py-2">
@@ -287,8 +314,8 @@
                                                 @endif
                                             @endif
                                         </select>
-                                        <textarea name="notes[]" class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"
-                                            id="notesSelect_{{ $doc->id }}">{{ $doc->notes }}</textarea>
+                                        <textarea name="notes[]" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                            placeholder="Type a notes" id="notesSelect_{{ $doc->id }}">{{ $doc->notes }}</textarea>
                                     </div>
                                 </div>
                             @endforeach
@@ -342,7 +369,9 @@
                                     </div>
                                 </div>
                             @endforeach
+
                         @endif
+
                         <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
                             <!--begin::Col-->
                             <div class="col-xl-4">
@@ -379,8 +408,8 @@
                                         @endif
                                     @endif
                                 </select>
-                                <textarea name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"
-                                    id="notesSignSelect">{{ $sign->notes }}</textarea>
+                                <textarea name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                    placeholder="Type a notes" id="notesSignSelect">{{ $sign->notes }}</textarea>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -418,6 +447,12 @@
                                         @endif
                                     @endif
                                 </select>
+                                <input style="display: none" id="settingTid" type="text"
+                                    name="status_setting_tid" class="form-control form-control-solid mt-3"
+                                    placeholder="TID" autocomplete="off" />
+                                <input style="display: none" id="settingMid" type="text"
+                                    name="status_setting_mid" class="form-control form-control-solid mt-3"
+                                    placeholder="MID" autocomplete="off" />
                                 <div style="display: none" class="select_reason" id="additionalSelect">
                                     <select id="reason" name="reason" aria-label="Pilih Alasan"
                                         data-control="select2"
@@ -431,6 +466,7 @@
                                 <textarea name="notes_approval" class="form-control border border-primary form-control-flush mb-3" rows="1"
                                     placeholder="Type a notes"></textarea>
                             </div>
+
                             <div class="d-flex justify-content-end pt-7">
                                 <button type="submit" class="btn btn-sm fw-bolder btn-primary">Save
                                     Changes</button>
@@ -446,8 +482,8 @@
                                             {{ $merchantApproval->status }}
                                         </option>
                                     </select>
-                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3" rows="1"
-                                        placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
+                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3"
+                                        rows="1" placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
                                 </div>
                             @endif
                         @endif
@@ -490,7 +526,7 @@
                                         <a href="#"
                                             class="fw-bolder text-gray-800 text-hover-primary fs-6">{{ $item->status }}</a>
 
-                                        @if (substr($item->approval_id, 0, 2) == 'S-')
+                                        @if (substr($item->approval_id, 0, 3) == '000')
                                             <span class="text-muted fw-bolder d-block">
                                                 Merchant Signature
                                             </span>

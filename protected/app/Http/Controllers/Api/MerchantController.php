@@ -169,18 +169,18 @@ class MerchantController extends RestController
 
                 Utils::addHistory($merchant->token_applicant, 'New Request', '', 'merchant', $merchant->id, );
 
-                // $checkUsername = BackOffice::checkUsername($merchant->username);
-                // if ($checkUsername !== 200) {
-                //     DB::rollBack();
-                //     return RestController::sendError('Username already used or duplicate!');
-                // }
+                $checkUsername = BackOffice::checkUsername($merchant->username);
+                if ($checkUsername !== 200) {
+                    DB::rollBack();
+                    return RestController::sendError('Username already used or duplicate!');
+                }
 
-                // $integrated = $this->addMerchantBO($merchant->token_applicant);
+                $integrated = $this->addMerchantBO($merchant->token_applicant);
 
-                // if (!$integrated) {
-                //     DB::rollBack();
-                //     return RestController::sendError('Gagal pengajuan merchant');
-                // }
+                if (!$integrated) {
+                    DB::rollBack();
+                    return RestController::sendError('Gagal pengajuan merchant');
+                }
                 $app = Applicant::where('token_applicant', $merchant->token_applicant)->first();
 
                 // SUbmitted
@@ -458,7 +458,6 @@ class MerchantController extends RestController
                 $image = Utils::uploadImageOri($request->file);
             }
             $merchant = Merchant::where('token_applicant', $request->token_applicant)->first();
-            // dd($merchant);
 
             $sign = MerchantSignature::where('token_applicant', $request->token_applicant)->first();
 
@@ -468,37 +467,61 @@ class MerchantController extends RestController
                     'token_applicant' => $request->token_applicant,
                     'image' => $image,
                     'status' => 'active',
-                    'status_approval' => 'New Request'
+                    'status_approval' => 'New Request',
+                    "notes" => '',
+                    "layer_id" => '1',
                 ]);
+                $curTotal = MerchantDocument::where('token_applicant', $request->token_applicant)->where('image', null)->count();
+
+                if ($curTotal < 1) {
+
+                    Merchant::where('token_applicant', $request->token_applicant)
+                        ->update([
+                            "dokumen_lengkap" => 1,
+                            "status_tanda_tangan" => 1,
+                            "status_approval" => 'New Request',
+                            "status_detail" => 'New Request',
+                        ]);
+                } else {
+
+                    Merchant::where('token_applicant', $request->token_applicant)
+                        ->update([
+                            "dokumen_lengkap" => 0,
+                            "status_tanda_tangan" => 1,
+                            "status_approval" => 'New Request',
+                            "status_detail" => 'New Request',
+                        ]);
+                }
                 if ($upload) {
                     DB::commit();
                     return RestController::sendResponse('Berhasil upload tanda tangan', $image);
                 }
                 DB::rollBack();
                 return RestController::sendError('Gagal upload tanda tangan');
+            } else {
+                $sign->image = $image;
+                if ($sign->save()) {
+                    Merchant::where('token_applicant', $request->token_applicant)
+                        ->update([
+                            "status_tanda_tangan" => 1,
+                            "status_approval" => 'Updated',
+                            "status_detail" => 'Updated',
+                            "dokumen_lengkap" => 1
+                        ]);
+                    MerchantSignature::where('token_applicant', $request->token_applicant)
+                        ->update([
+                            "status_approval" => 'Updated',
+                            "notes" => '',
+                            "layer_id" => '1',
+                        ]);
+
+                    // $merchant->status_tanda_tangan = 1;
+                    // $merchant->save();
+                    DB::commit();
+                    return RestController::sendResponse('Berhasil upload tanda tangan', $image);
+                }
             }
 
-            $sign->image = $image;
-            if ($sign->save()) {
-                Merchant::where('token_applicant', $request->token_applicant)
-                    ->update([
-                        "status_tanda_tangan" => 1,
-                        "status_approval" => 'Updated',
-                        "status_detail" => 'Updated',
-                        "dokumen_lengkap" => 1
-                    ]);
-                MerchantSignature::where('token_applicant', $request->token_applicant)
-                ->update([
-                    "status_approval" => 'Updated',
-                    "notes" => '',
-                    "layer_id" => '1',
-                ])
-
-                // $merchant->status_tanda_tangan = 1;
-                // $merchant->save();
-                DB::commit();
-                return RestController::sendResponse('Berhasil upload tanda tangan', $image);
-            }
             DB::rollBack();
             return RestController::sendError('Gagal upload tanda tangan');
         } catch (\Throwable $th) {

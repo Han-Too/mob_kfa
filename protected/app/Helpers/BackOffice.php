@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -54,7 +55,7 @@ class BackOffice
             $businessType = "PERSEORANGAN";
         }
 
-	$auth = Auth::user();
+	    $auth = Auth::user();
         $mccId = Utils::getBoIdOutlets($merchant->mcc);
         $bankCode = Utils::getBankCode($merchant->nama_bank);
 

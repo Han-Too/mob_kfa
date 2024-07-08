@@ -241,7 +241,7 @@ class ApplicantController extends Controller
                             'updated_by' => $user->id,
                             'layer_id' => $layer_id
                         ]);
-                    Utils::addHistory($request->token, $statusDocument, $request->notesSign, 'document', "S-".$id);
+                    Utils::addHistory($request->token, $statusDocument, $request->notesSign, 'document', "000".$id);
                 }
             }
 
@@ -259,15 +259,17 @@ class ApplicantController extends Controller
             }
 
             if ($request->status_approval == 'Reject' || $request->status_approval == 'Close') {
-                Mail::to($data->email)->send(new ApprovalMail($data, $app));
-                Mail::to($data->bisnis_email)->send(new ApprovalMail($data, $app));
-                Mail::to($data->email_pengurus)->send(new ApprovalMail($data, $app));
+                Mail::to($data->email)->cc([$data->bisnis_email,$data->email_pengurus])->send(new ApprovalMail($data, $app));
+                // Mail::to($data->email)->send(new ApprovalMail($data, $app));
+                // Mail::to($data->bisnis_email)->send(new ApprovalMail($data, $app));
+                // Mail::to($data->email_pengurus)->send(new ApprovalMail($data, $app));
             }
 
             DB::commit();
             return json_encode(['status' => true, 'message' => 'Success']);
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::info($th);
             return json_encode(['status' => false, 'message' => 'Gagal Proses Data!']);
         }
     }

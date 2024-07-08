@@ -217,23 +217,23 @@
                                     aria-valuemax="100"></div>
                             </div>
                         </div>
-                        {{-- @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
+                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                             <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
                                 <div class="d-flex justify-content-between w-100 mt-auto">
                                     <span class="fw-bold fs-6 text-gray">Assign Layer</span>
-                                </div>
-                                <div class="h-5px mx-3 w-100 mb-3">
-                                    <select onchange="assignLayer()" id="approvalStatus" name="status_approval"
-                                        aria-label="Select Recomendation"
-                                        class="form-select form-select-sm form-select-solid">
-                                        <option value="">-- Select Layer --</option>
-                                        @foreach ($layers as $lay)
-                                            <option value="{{ $lay->id }}">{{ $lay->title }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="h-5px mx-3 w-100 mb-3">
+                                        <select onchange="assignLayer()" id="assignStatus" name="status_assign"
+                                            aria-label="Select Recomendation"
+                                            class="form-select form-select-sm form-select-solid">
+                                            <option value="">-- Select Layer --</option>
+                                            @foreach ($layers as $lay)
+                                                <option value="{{ $lay->id }}">{{ $lay->title }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        @endif --}}
+                        @endif
 
                     </div>
                     <!--end::Progress-->
@@ -303,7 +303,7 @@
         <script src="{{ asset('tadmin/js/custom/applicant/custom.js') }}"></script>
         <script>
             function assignLayer() {
-                var selectedValue = $('#approvalStatus').val();
+                var selectedValue = $('#assignStatus').val();
                 var token = `{{ $data->token_applicant }}`;
 
                 if (selectedValue !== '') {

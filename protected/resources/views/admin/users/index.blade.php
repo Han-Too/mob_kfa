@@ -214,6 +214,34 @@
                                                     <!--end::Input row-->
                                                     <div class='separator separator-dashed my-5'></div>
                                                 @endforeach
+                                                @if (Auth::user()->role_id == 7)
+                                                    <!--begin::Input row-->
+                                                    <div class="d-flex fv-row">
+                                                        <!--begin::Radio-->
+                                                        <div class="form-check form-check-custom form-check-solid">
+                                                            <!--begin::Input-->
+                                                            <input class="form-check-input me-3" name="user_role"
+                                                                type="radio" value="7"
+                                                                id="kt_modal_update_role_option_7" />
+                                                            <!--end::Input-->
+                                                            <!--begin::Label-->
+                                                            <label class="form-check-label"
+                                                                for="kt_modal_update_role_option_0">
+                                                                <div class="fw-bolder text-gray-800">
+                                                                    Dewa Admin
+                                                                </div>
+                                                                <div class="text-gray-600">
+                                                                    Has all the capabilities
+                                                                    that even superadmins don't have
+                                                                </div>
+                                                            </label>
+                                                            <!--end::Label-->
+                                                        </div>
+                                                        <!--end::Radio-->
+                                                    </div>
+                                                    <!--end::Input row-->
+                                                    <div class='separator separator-dashed my-5'></div>
+                                                @endif
                                                 <!--end::Roles-->
                                             </div>
                                             <!--end::Input group-->
