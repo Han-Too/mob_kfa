@@ -16,6 +16,7 @@ use App\Models\AddressList;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Faker\Provider\ar_EG\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,9 @@ use Illuminate\Support\Facades\Log;
 use File;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\URL;
+use RealRashid\SweetAlert\Facades\Alert;
+use Symfony\Component\Console\Input\Input;
+use Yajra\DataTables\DataTables;
 use ZanySoft\Zip\Facades\Zip;
 use ZipArchive;
 
@@ -2187,4 +2191,134 @@ class GeneralController extends Controller
         return response()->download($data->image, 'image.png');
 
     }
+
+    public function showAddress(Request $request)
+    {
+        // $data = AddressList::
+        //     where('country', 'indonesia')
+        //     ->get();
+        $keyword = '';
+        $data = AddressList::where('country', 'indonesia')->paginate(50);
+        return view('admin.addressList.index', compact('data', 'keyword'));
+    }
+    public function getAddress($id)
+    {
+        // $data = AddressList::paginate(10);
+        $data = AddressList::where('id', $id)->first();
+        // dd($data);
+        return view('admin.addressList.edit', compact('data'));
+    }
+
+    public function updateAddress(Request $request)
+    {
+        $data = AddressList::where('id', $request->id)->first();
+
+        DB::beginTransaction();
+        try {
+            $update = DB::table('addresses_list')->where('id', $request->id)
+                ->update([
+                    'province' => $request->province,
+                    'country' => $request->country,
+                    'district' => $request->district,
+                    'village' => $request->village,
+                    'post_code' => $request->post_code,
+                    'country_code' => $request->country_code,
+                ]);
+
+            if ($update) {
+                // Utils::addLog($request->token, "Address List", "Update Address", $request->alasan);
+                DB::commit();
+                return response()->json(['message' => "Successfully update address!", 'status' => true], 201);
+            }
+            DB::rollBack();
+            return response()->json(['message' => "Failed add address!", 'status' => false], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th);
+            return response()->json(['message' => "Failed add address!", 'status' => false], 200);
+        }
+
+
+    }
+
+    public function deleteAddress($id)
+    {
+        $address = AddressList::where('id', $id)->first();
+        if ($address) {
+            $address->delete();
+            return redirect('addresslist')->with('msg', 'Address deleted successfully');
+            // return response()->json(['message' => "Success Delete User!", 'status' => true], 200);
+        }
+    }
+    public function storeAddress(Request $request)
+    {
+        $data = AddressList::
+            where('village', $request->village)
+            ->first();
+
+        if ($data) {
+            // return response()->json(['message' => "Address is already!", 'status' => false], 200);
+            Alert::error('Error', 'Address is already!');
+            return redirect("/addresslist");
+        }
+
+        DB::beginTransaction();
+        try {
+            $address = DB::table('addresses_list')->insert([
+                'province' => $request->province,
+                'country' => $request->country,
+                'country_code' => $request->country_code,
+                'city' => $request->city,
+                'district' => $request->district,
+                'village' => $request->village,
+                'post_code' => $request->post_code,
+            ]);
+            Utils::addLog(Auth::user()->token, Auth::user()->username, "Create Address", "Create a address with village = " . $request->village . " and district = " . $request->district);
+
+            if ($address) {
+                DB::commit();
+                // return response()->json(['message' => "Successfully added address!", 'status' => true], 201);
+                Alert::success('Success', 'Successfully added address!');
+                return redirect("/addresslist")->with('msg', 'Successfully added address');
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::info($th);
+            Alert::error('error', 'Failed add address!');
+            // return response()->json(['message' => "Failed add address!", 'status' => false], 200);
+            return redirect("/addresslist");
+        }
+
+    }
+
+    public function searchAddress(Request $request)
+    {
+        $keyword = $request->keyword;
+        if ($keyword != "") {
+            $data = AddressList::
+                // where('province', 'LIKE', '%' . $request->keyword . '%')
+                // ->orWhere('country', 'LIKE', '%' . $request->keyword . '%')
+                // ->orWhere('district', 'LIKE', '%' . $request->keyword . '%')
+                where('district', 'LIKE', '%' . $request->keyword . '%')
+                ->paginate(20)->setPath('');
+            $pagination = $data->appends(
+                array(
+                    'keyword' => $keyword
+                )
+            );
+            if (count($data) > 0) {
+                return view('admin.addressList.index', compact('data', 'keyword'))->withQuery($keyword);
+            } else {
+                $data = AddressList::where('country', null)->paginate(10);
+                return view('admin.addressList.index', compact('data', 'keyword'))->withQuery($keyword);
+                // return redirect("addresslist");
+            }
+        } else {
+            return redirect("addresslist");
+        }
+
+
+        // return view('admin.addressList.index', compact('data', 'keyword'));
+    }
+
 }

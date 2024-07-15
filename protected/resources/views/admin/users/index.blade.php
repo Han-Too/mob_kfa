@@ -309,6 +309,7 @@
                                                         class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                             </button>
                                         </div>
+                                    </div>
                                         <!--end::Actions-->
                                 </form>
                                 <!--end::Form-->

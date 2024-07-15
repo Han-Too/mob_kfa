@@ -22,6 +22,8 @@ Route::post('portal/login', [AuthenticationController::class, 'portalLogin']);
 
 Route::post('web/reset-password', [GeneralController::class, 'resetPassword']);
 
+Route::get('addressall', [AddressController::class, 'getAll']);
+
 Route::middleware(['api_key'])->group(function(){
     // Location
     Route::get('province', [GeneralController::class, 'province']);

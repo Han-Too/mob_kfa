@@ -16,6 +16,7 @@
             });
         </script>
     @endif
+    @include('sweetalert::alert')
     <!--begin::Main-->
     <!--begin::Root-->
     <div class="d-flex flex-column flex-root">

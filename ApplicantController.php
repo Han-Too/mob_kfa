@@ -308,6 +308,40 @@ class ApplicantController extends Controller
             return false;
         }
     }
+    public function addMerchantBOSecure($token_applicant)
+    {
+        $usr = Merchant::where('token_applicant', $token_applicant)->pluck('user_id')->first();
+
+        $user = User::where('id', $usr)->first();
+
+        try {
+            $salt = 'BtDMQ7RfNVoRzWGjS2DK';
+            $decPass = BackOffice::decrypt($salt, $user->bo_password);
+            $decPin = BackOffice::decrypt($salt, $user->bo_pin);
+
+            $encPass = BackOffice::encrypt($salt, $decPass);
+            $encPin = BackOffice::encrypt($salt, $decPin);
+
+
+            $merchant = Merchant::where('token_applicant', $token_applicant)->first();
+
+            $merchant_id = BackOffice::registerToBackOfficeSecure($encPass, $encPin, $merchant);
+            // $merchant_id = BackOffice::registerToBackOffice($encPass, $merchant->email, $merchant->username, $encPin, $merchant->nama_merchant);
+            // dd($merchant_id);
+            if ($merchant_id) {
+                return true;
+                // $merchant->merchant_id = $merchant_id;
+                // if ($merchant->save()) {
+                //     return true;
+                // }
+                // return false;
+            }
+            return false;
+        } catch (\Throwable $th) {
+            Log::info($th);
+            return false;
+        }
+    }
 
     public function merchantUpdate(Request $request)
     {

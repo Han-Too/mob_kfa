@@ -175,12 +175,14 @@ class MerchantController extends RestController
                     return RestController::sendError('Username already used or duplicate!');
                 }
 
-                $integrated = $this->addMerchantBO($merchant->token_applicant);
+                // $integrated = $this->addMerchantBO($merchant->token_applicant);
 
-                if (!$integrated) {
-                    DB::rollBack();
-                    return RestController::sendError('Gagal pengajuan merchant');
-                }
+                // if (!$integrated) {
+                //     DB::rollBack();
+
+                //     return RestController::sendError('Gagal pengajuan merchant');
+                // }
+
                 $app = Applicant::where('token_applicant', $merchant->token_applicant)->first();
 
                 // SUbmitted
@@ -202,7 +204,7 @@ class MerchantController extends RestController
             DB::rollBack();
             return RestController::sendError('Gagal pengajuan merchant');
         } catch (\Throwable $th) {
-            // dd($th);
+            // //dd($th);
             Log::info($th);
             DB::rollBack();
             return RestController::sendError('Gagal pengajuan merchant');
@@ -312,6 +314,7 @@ class MerchantController extends RestController
             return RestController::sendError('Gagal perbarui data merchant');
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::info($th);
             return RestController::sendError('Gagal perbarui data merchant');
         }
     }
@@ -327,10 +330,12 @@ class MerchantController extends RestController
             $encPass = BackOffice::encrypt($salt, $decPass);
             $encPin = BackOffice::encrypt($salt, $decPin);
 
-            $merchant_id = BackOffice::registerToBackOffice($encPass, $request->email, $request->username, $encPin, $request->nama_merchant);
+            // $merchant_id = BackOffice::registerToBackOffice($encPass, $request->email, $request->username, $encPin, $request->nama_merchant);
+            $merchant_id = BackOffice::registerToBackOffice($encPass, $encPin, $request->nama_merchant);
             return RestController::sendResponse('Berhasil', $merchant_id);
         } catch (\Throwable $th) {
-            dd($th);
+            //dd($th);
+            Log::info($th);
         }
     }
 
@@ -348,7 +353,8 @@ class MerchantController extends RestController
 
             $merchant = Merchant::where('token_applicant', $token_applicant)->first();
 
-            $merchant_id = BackOffice::registerToBackOffice($encPass, $merchant->email, $merchant->username, $encPin, $merchant->nama_merchant);
+            // $merchant_id = BackOffice::registerToBackOffice($encPass, $merchant->email, $merchant->username, $encPin, $merchant->nama_merchant);
+            $merchant_id = BackOffice::registerToBackOffice($encPass, $encPin, $merchant);
             if ($merchant_id) {
                 $merchant->merchant_id = $merchant_id;
                 if ($merchant->save()) {
@@ -358,7 +364,8 @@ class MerchantController extends RestController
             }
             return false;
         } catch (\Throwable $th) {
-            dd($th);
+            //dd($th);
+            Log::info($th);
             return false;
         }
     }
@@ -371,7 +378,7 @@ class MerchantController extends RestController
             $documents = MerchantDocument::with('document')->where('token_applicant', $request->token_applicant)->get();
             // $signature = MerchantSignature::where('token_applicant', $request->token_applicant)->get();
             // $data = $documents->merge($signature);
-            // dd($documents);
+            // //dd($documents);
             return RestController::sendResponse('List dokumen pengajuan merchant', $documents);
         }
         return RestController::sendError('Data merchant tidak ditemukan');
@@ -432,6 +439,7 @@ class MerchantController extends RestController
             return RestController::sendResponse('Dokumen tidak ditemukan');
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::info($th);
             return RestController::sendResponse('Gagal upload dokumen');
         }
     }
@@ -462,7 +470,7 @@ class MerchantController extends RestController
             $sign = MerchantSignature::where('token_applicant', $request->token_applicant)->first();
 
             if (!$sign) {
-                // dd($sign);
+                // //dd($sign);
                 $upload = MerchantSignature::create([
                     'token_applicant' => $request->token_applicant,
                     'image' => $image,
@@ -483,7 +491,6 @@ class MerchantController extends RestController
                             "status_detail" => 'New Request',
                         ]);
                 } else {
-
                     Merchant::where('token_applicant', $request->token_applicant)
                         ->update([
                             "dokumen_lengkap" => 0,
@@ -514,6 +521,13 @@ class MerchantController extends RestController
                             "notes" => '',
                             "layer_id" => '1',
                         ]);
+
+                    $applicant = Applicant::where('token_applicant', $request->token_applicant)->first();
+                    $applicant->internal_status = 'Updated';
+                    $applicant->layer_id = 2;
+                    $applicant->save();
+
+                    Utils::addHistory($request->token_applicant, 'Updated', 'Signature diupload ulang', 'document', $sign->id);
 
                     // $merchant->status_tanda_tangan = 1;
                     // $merchant->save();
@@ -558,6 +572,7 @@ class MerchantController extends RestController
             return RestController::sendError('Gagal upload bukti pembayaran');
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::info($th);
             return RestController::sendResponse('Gagal upload bukti pembayaran');
         }
     }
@@ -632,7 +647,8 @@ class MerchantController extends RestController
             $signature = MerchantSignature::where("token_applicant", $id)->select("image", "status_approval", "notes")->first();
             return RestController::sendResponse('Berhasil Mendapatkan Data', $signature);
         } catch (\Throwable $th) {
-            dd($th);
+            //dd($th);
+            Log::info($th);
         }
     }
     public function getDoc($id)
@@ -647,11 +663,11 @@ class MerchantController extends RestController
             for ($i = 0; $i < $jum; $i++) {
                 $links[$i] = $documents[$i]->image;
             }
-            // dd($signature[0]->image);
+            // //dd($signature[0]->image);
             foreach ($signature as $sign) {
                 $links[$jum + 1] = $sign->image;
             }
-            // dd($links);
+            // //dd($links);
             return RestController::sendResponse('List Data Dokumen', $links);
         }
         return RestController::sendError('Data merchant tidak ditemukan');

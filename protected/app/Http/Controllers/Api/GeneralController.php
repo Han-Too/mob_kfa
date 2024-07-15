@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class GeneralController extends RestController
@@ -117,13 +118,17 @@ class GeneralController extends RestController
             }
 
             $user = User::where('email', $token->email)->first();
+
             if (!$user) {
                 DB::rollBack();
                 return response()->json(['status' => false, 'message' => "User ot found!"]);
             }
 
-            $user->password = Hash::make($request->password);
-            if ($user->save()) {
+            // $user->password = Hash::make($request->password);
+            $change = User::where('email', $token->email)->update([
+                'password' => Hash::make($request->password)
+            ]);
+            if ($change) {
                 $utoken = PasswordReset::where('token', $request->token)->update([
                     'expired_at' => $now->subHour()
                 ]);
@@ -134,6 +139,7 @@ class GeneralController extends RestController
             return response()->json(['status' => false, 'message' => "Gagal Reset Password!"]);
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::info($th);
             return response()->json(['status' => false, 'message' => "Gagal Reset Password!"]);
         }
     }

@@ -33,6 +33,9 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+Route::get('/get_captcha/{config?}', function (\Mews\Captcha\Captcha $captcha, $config = 'default') {
+    return $captcha->src($config);
+});
 
 Route::middleware('auth')->group(function () {
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -41,6 +44,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/', [GeneralController::class, 'dashboard'])->name('user.dashboard');
 
+
+    // Address
+    Route::get('/addresslist', [GeneralController::class, 'showAddress'])->name('addressList.index');
+    Route::post('/addresslist/store', [GeneralController::class, 'storeAddress'])->name('addressList.store');
+    Route::get('/addresslist/get/{id}', [GeneralController::class, 'getAddress'])->name('addressList.get');
+    Route::post('/addresslist/update', [GeneralController::class, 'updateAddress'])->name('addressList.update');
+    Route::get('/addresslist/search', [GeneralController::class, 'searchAddress'])->name('addressList.search');
+    Route::post('/addresslist/delete/{token}', [GeneralController::class, 'deleteAddress'])->name('addresslist.delete');
 
     // User
     Route::get('/users', [UserController::class, 'index'])->name('user.index');

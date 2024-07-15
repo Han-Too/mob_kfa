@@ -89,6 +89,7 @@ class ApplicantController extends Controller
         $layers = MasterLayer::where('status', '!=', 'deleted')->get();
 
         $detailHis = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'detail')->orderByDesc('created_at')->get();
+        
         return view('admin.applicants.show', compact('tokenApp', 'layers', 'allDocHis', 'sign', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
     }
 
@@ -241,7 +242,7 @@ class ApplicantController extends Controller
                             'updated_by' => $user->id,
                             'layer_id' => $layer_id
                         ]);
-                    Utils::addHistory($request->token, $statusDocument, $request->notesSign, 'document', "000".$id);
+                    Utils::addHistory($request->token, $request->statusSign, $request->notesSign, 'document', "000".$id);
                 }
             }
 

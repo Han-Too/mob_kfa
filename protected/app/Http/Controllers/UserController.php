@@ -26,9 +26,9 @@ class UserController extends Controller
     public function index()
     {
         $data = User::where('status', '!=', 'deleted')->get();
-        $total = count($data);
+        // $total = count($data);
         $roles = MasterPrivilege::where('status', '!=', 'deleted')->where('id', '!=', 6)->get();
-        return view('admin.users.index', compact('data', 'roles','total'));
+        return view('admin.users.index', compact('data', 'roles'));
     }
     public function deleted()
     {

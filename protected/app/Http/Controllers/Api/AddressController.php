@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class AddressController extends RestController
 {
+    public function getAll()
+    {
+        $data = DB::table('addresses_list')->select('id','country','province','city','district','village')->where('country', 'Indonesia')->get();
+        return response()->json($data);
+    }
     public function province()
     {
         $provinces = DB::table('addresses_list')->select('province')->where('country', 'Indonesia')->groupBy('province')->get();

@@ -1,9 +1,3 @@
-{{-- @php
-    
-var_dump($data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id));
-die();
-@endphp --}}
-
 @if (count($documents) < 1)
     <div class="card-title fs-4 fw-bolder text-center">Data not found.</div>
 @else
@@ -59,7 +53,16 @@ die();
                                 </div>
                             </div>
                         @endforeach
-                        
+
+                        @if (empty($sign))
+                        <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
+                            <div class="col">
+                                <p class="h1 text-danger">
+                                    Merchant Ini Belum Mengupload Signature
+                                </p>
+                            </div>
+                        </div>
+                        @else
                             <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
                                 <!--begin::Col-->
                                 <div class="col-xl-4">
@@ -88,6 +91,7 @@ die();
                                 </div>
                                 <!--end::Col-->
                             </div>
+                        @endif
                         @if ($data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
 
                             <div class="col-xl-12 fv-row">
@@ -159,13 +163,13 @@ die();
                                             class="btn btn-sm fw-bolder btn-warning mx-1">Reject</button>
                                         {{-- ///////////////////////////////////////// --}}
                                         {{-- <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#kt_modal_view_signature"
-                                            class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button> --}}
+                                    data-bs-target="#kt_modal_view_signature"
+                                    class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button> --}}
 
                                         <input type="hidden" id="userId" value="{{ $tokenApp }}">
                                         {{-- <button type="button" id="downloadKabeh"
-                                            class="btn btn-sm fw-bolder btn-info mx-1">Download
-                                            All</button> --}}
+                                    class="btn btn-sm fw-bolder btn-info mx-1">Download
+                                    All</button> --}}
 
                                         <script>
                                             document.getElementById('downloadKabeh').addEventListener('click', async function() {
@@ -259,13 +263,12 @@ die();
                                     <!--begin::Col-->
                                     <div class="col-xl-4">
                                         {{-- <div class="d-flex flex-column">
-                                            <div class="symbol symbol-100px symbol-2by3 cursor-pointer"
-                                                data-bs-toggle="modal" data-bs-target="#kt_modal_view_users"
-                                                onclick="handleImageClick('{{ $doc->image }}', 'Dokumen {{ $doc->document->title }}')">
-                                                <div class="symbol-label"
-                                                    style="background-image: url({{ $doc->image }})"></div>
-                                            </div>
-                                        </div> --}}
+                                <div class="symbol symbol-100px symbol-2by3 cursor-pointer" data-bs-toggle="modal"
+                                    data-bs-target="#kt_modal_view_users"
+                                    onclick="handleImageClick('{{ $doc->image }}', 'Dokumen {{ $doc->document->title }}')">
+                                    <div class="symbol-label" style="background-image: url({{ $doc->image }})"></div>
+                                </div>
+                            </div> --}}
                                         <div class="d-flex flex-column">
                                             @if ($doc->type == 'pdf')
                                                 {{-- @if (substr($url, -3) == 'pdf') --}}
@@ -541,7 +544,10 @@ die();
                                                 {{ App\Helpers\Utils::getUserName($item->user_id) . '( Dewa )' }}
                                         </span>
                                     @else
-                                        {{ App\Helpers\Utils::getUserName($item->user_id) . '( ' . App\Helpers\Utils::getUserRole($item->user_id) . ' )' }}</span>
+                                        {{ App\Helpers\Utils::getUserName($item->user_id) .
+                                            '( ' .
+                                            App\Helpers\Utils::getUserRole($item->user_id) .
+                                            ' )' }}</span>
                             @endif
                         </div>
                         <!--end::Title-->
