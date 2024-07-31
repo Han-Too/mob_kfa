@@ -8,16 +8,15 @@
                 <h2>Merchant's Branch</h2>
                 <h4 class="fw-bold fs-6 mb-2 mt-2 text-muted">Management of {{ $merchant->nama_merchant }} branch</h4>
             </div>
-                
+
             <div class="d-flex my-4">
-                <a href="{{ URL::previous() }}"
-                    class="btn btn-sm btn-danger me-2">
+                <a href="{{ URL::previous() }}" class="btn btn-sm btn-danger me-2">
                     <!--begin::Indicator-->
-                    <span class="indicator-label">< Back</span>
-                    <!--end::Indicator-->
+                    <span class="indicator-label">
+                        < Back</span>
+                            <!--end::Indicator-->
                 </a>
-                <a href="{{ route('applicant.show', $merchant->token_applicant) }}"
-                    class="btn btn-sm btn-primary me-2">
+                <a href="{{ route('applicant.show', $merchant->token_applicant) }}" class="btn btn-sm btn-primary me-2">
                     <!--begin::Indicator-->
                     <span class="indicator-label">View Merchant</span>
                     <!--end::Indicator-->
@@ -54,21 +53,25 @@
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                     <div class="mb-0 me-4 px-2">
-                        <input class="form-control form-control-solid text-center" placeholder="Pick date rage" id="kt_daterangepicker_1" style="width: 250px;"/>
+                        <input class="form-control form-control-solid text-center" placeholder="Pick date rage"
+                            id="kt_daterangepicker_1" style="width: 250px;" />
                     </div>
                     <!--begin::Filter-->
                     <!--begin::Add user-->
                     <button type="button" class="btn btn-sm btn-flex btn-primary btn-active-success btn-filter">
                         <!--begin::Svg Icon | path: icons/duotune/arrows/arr075.svg-->
                         <span class="svg-icon svg-icon-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M19.0759 3H4.72777C3.95892 3 3.47768 3.83148 3.86067 4.49814L8.56967 12.6949C9.17923 13.7559 9.5 14.9582 9.5 16.1819V19.5072C9.5 20.2189 10.2223 20.7028 10.8805 20.432L13.8805 19.1977C14.2553 19.0435 14.5 18.6783 14.5 18.273V13.8372C14.5 12.8089 14.8171 11.8056 15.408 10.964L19.8943 4.57465C20.3596 3.912 19.8856 3 19.0759 3Z" fill="black" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none">
+                                <path
+                                    d="M19.0759 3H4.72777C3.95892 3 3.47768 3.83148 3.86067 4.49814L8.56967 12.6949C9.17923 13.7559 9.5 14.9582 9.5 16.1819V19.5072C9.5 20.2189 10.2223 20.7028 10.8805 20.432L13.8805 19.1977C14.2553 19.0435 14.5 18.6783 14.5 18.273V13.8372C14.5 12.8089 14.8171 11.8056 15.408 10.964L19.8943 4.57465C20.3596 3.912 19.8856 3 19.0759 3Z"
+                                    fill="black" />
                             </svg>
                         </span>
                         <!--end::Svg Icon-->Filter</button>
-                        @if(isset(request()->dateRange))
-                            <a href="{{ url()->current() }}" class="btn btn-sm btn-flex btn-warning ms-2">Clear Filter</a>
-                        @endif
+                    @if (isset(request()->dateRange))
+                        <a href="{{ url()->current() }}" class="btn btn-sm btn-flex btn-warning ms-2">Clear Filter</a>
+                    @endif
                     <!--end::Add user-->
                 </div>
                 <!--end::Toolbar-->
@@ -113,8 +116,10 @@
                                 <div class="d-flex align-items-center mb-7">
                                     <!--begin::Title-->
                                     <div class="flex-grow-1 me-2">
-                                        <a href="#" class="fw-bolder text-gray-800 text-hover-primary fs-6">{{ App\Helpers\Utils::getUserName($item->update_by) }}</a>
-                                        <span class="text-muted fw-bold d-block">{{ App\Helpers\Utils::getUserRole($item->update_by) }}</span>
+                                        <a href="#"
+                                            class="fw-bolder text-gray-800 text-hover-primary fs-6">{{ App\Helpers\Utils::getUserName($item->update_by) }}</a>
+                                        <span
+                                            class="text-muted fw-bold d-block">{{ App\Helpers\Utils::getUserRole($item->update_by) }}</span>
                                     </div>
                                     <!--end::Title-->
                                 </div>
@@ -123,11 +128,13 @@
                             <td style="vertical-align: top" class="text-end">
                                 <span
                                     class="d-flex flex-column badge badge-lg badge-light-{{ App\Helpers\Utils::badgeApplicant($item->status) }}">{{ App\Helpers\Utils::internalPaymentStatusByRecomendation($item->internal_status) }}</span>
-                                @if ( $item->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
-                                    <a href="{{ url('/applicants/branches/show/'.$item->id.'/'.$merchant->token_applicant) }}"
-                                        class="d-flex flex-column btn btn-sm btn-success mt-2">Process</a>
+                                @if ($item->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
+                                    @if (Auth::user()->role_id != 3)
+                                        <a href="{{ url('/applicants/branches/show/' . $item->id . '/' . $merchant->token_applicant) }}"
+                                            class="d-flex flex-column btn btn-sm btn-success mt-2">Process</a>
+                                    @endif
                                 @else
-                                    <a href="{{ url('/applicants/branches/show/'.$item->id.'/'.$merchant->token_applicant) }}"
+                                    <a href="{{ url('/applicants/branches/show/' . $item->id . '/' . $merchant->token_applicant) }}"
                                         class="d-flex flex-column btn btn-sm btn-primary mt-2">View Detail</a>
                                 @endif
                             </td>
@@ -153,7 +160,8 @@
                 $('.btn-filter').on('click', function() {
                     var dateRangeValue = $('#kt_daterangepicker_1').val();
 
-                    var newUrl = window.location.href.split('?')[0] + '?dateRange=' + encodeURIComponent(dateRangeValue);
+                    var newUrl = window.location.href.split('?')[0] + '?dateRange=' + encodeURIComponent(
+                        dateRangeValue);
                     window.location.href = newUrl;
                 });
             });

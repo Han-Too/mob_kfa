@@ -133,6 +133,8 @@
     <div class="mainDiv">
         <div class="cardStyle">
             <form action="" method="post" name="signupForm" id="signupForm">
+            {{-- <form action="/api/web/reset-password" method="post"> --}}
+                @csrf
 
                 <img src="" id="signupLogo" />
 
@@ -164,7 +166,8 @@
     </div>
     <script>
         var apiKey = @json(env('API_KEY', ''));
-        var apiURL = @json(env('APP_URL', ''));
+        var apiURL = "https://dev-mob.cashlez.com/mob";
+        // var apiURL = @json(env('APP_URL', ''));
         var token = @json($token);
     </script>
     <script>

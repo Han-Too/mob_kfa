@@ -13,7 +13,7 @@
                     enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="token" value="{{ $data->token_applicant }}">
-                    @if (Auth::user()->role_id == 5)
+                    @if (Auth::user()->role_id == 5 || Auth::user()->role_id == 7)
                         @foreach ($documents as $doc)
                             <div class="row mb-4 py-2">
                                 <!--begin::Col-->
@@ -49,10 +49,49 @@
                                         <option value="{{ $doc->status_approval }}">{{ $doc->status_approval }}
                                         </option>
                                     </select>
-                                    <textarea class="form-control form-control-flush mb-3" rows="1" disabled>{{ $doc->notes }}</textarea>
+                                    <textarea class="form-control border border-primary form-control-flush mb-3" rows="1" disabled>{{ $doc->notes }}</textarea>
                                 </div>
                             </div>
                         @endforeach
+
+                        @if (empty($sign))
+                            <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
+                                <div class="col">
+                                    <p class="h1 text-danger">
+                                        Merchant Ini Belum Mengupload Signature
+                                    </p>
+                                </div>
+                            </div>
+                        @else
+                            <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
+                                <!--begin::Col-->
+                                <div class="col-xl-4">
+                                    <div class="d-flex flex-column">
+                                        <div class="symbol symbol-100px symbol-2by3 cursor-pointer"
+                                            data-bs-toggle="modal" data-bs-target="#kt_modal_view_signature">
+                                            <div class="symbol-label"
+                                                style="background-image: url({{ $sign->image }})">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-8 fv-row">
+                                    <div class="fs-6 fw-bold mt-2 mb-3">
+                                        Merchant Signature
+                                    </div>
+                                    <select name="statusSign" aria-label="Select Approval"
+                                        class="form-select form-select-sm form-select-solid documentSelect"
+                                        id="signSelect" onchange="clearSignNotes({{ $sign->id }})" disabled>
+                                        <option value="{{ $sign->status_approval }}">
+                                            {{ $sign->status_approval }}
+                                        </option>
+                                    </select>
+                                    <textarea name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                        placeholder="Type a notes" id="notesSignSelect">{{ $sign->notes }}</textarea>
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                        @endif
                         @if ($data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
 
                             <div class="col-xl-12 fv-row">
@@ -69,17 +108,8 @@
                                     class="form-control form-control-solid mt-3" placeholder="TID" autocomplete="off" />
                                 <input style="display: none" id="settingMid" type="text" name="status_setting_mid"
                                     class="form-control form-control-solid mt-3" placeholder="MID" autocomplete="off" />
-                                {{-- <div style="display: none" class="select_reason" id="additionalSelect">
-                                    <select id="reason" name="reason" aria-label="Pilih Alasan"
-                                        data-control="select2"
-                                        class="form-select form-select-sm form-select-solid mt-2">
-                                        <option value="">-- Pilih Alasan --</option>
-                                        @foreach ($reason as $item)
-                                            <option value="{{ $item->title }}">{{ $item->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> --}}
-                                <textarea name="notes_approval" class="form-control form-control-flush mb-3" rows="1" placeholder="Type a notes"></textarea>
+                                <textarea name="notes_approval" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                    placeholder="Type a notes"></textarea>
                             </div>
                             <div class="d-flex justify-content-end pt-7">
                                 <button type="submit" class="btn btn-sm fw-bolder btn-primary">Save
@@ -96,112 +126,151 @@
                                             {{ $merchantApproval->status == 'Approve' ? 'Approved by Bank' : $merchantApproval->status }}
                                         </option>
                                     </select>
-                                    <textarea name="notes_approval" disabled class="form-control form-control-flush mb-3" rows="1"
-                                        placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
+                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3"
+                                        rows="1" placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
                                 </div>
                             @endif
                         @endif
                     @else
                         @if (Auth::user()->role_id == 1 ||
+                                Auth::user()->role_id == 7 ||
                                 $data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
-                            <div class="row mb-4 py-2">
-                                <!--begin::Col-->
-                                <div class="col-xl-12 fv-row">
-                                    <div class="fs-6 fw-bold mb-3">Bulk Update</div>
-                                    <div class="d-flex justify-content-start">
-                                        @if (Auth::user()->role_id == 1)
-                                            <button type="button"
-                                                onclick="bulkDocument('Verification', 'Document has been verified')"
-                                                class="btn btn-sm fw-bolder btn-primary mx-1">Verification</button>
-                                            <button type="button"
-                                                onclick="bulkDocument('Validation', 'Document has been validated')"
-                                                class="btn btn-sm fw-bolder btn-primary mx-1">Validation</button>
-                                        @else
-                                            @if ($data->workflow->layer_id == 2)
+                            @if (Auth::user()->role_id != 3)
+                                <div class="row mb-4 py-2">
+                                    <!--begin::Col-->
+                                    <div class="col-xl-12 fv-row">
+                                        <div class="fs-6 fw-bold mb-3">Bulk Update</div>
+                                        <div class="d-flex justify-content-start">
+                                            @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                                 <button type="button"
                                                     onclick="bulkDocument('Verification', 'Document has been verified')"
                                                     class="btn btn-sm fw-bolder btn-primary mx-1">Verification</button>
-                                            @elseif($data->workflow->layer_id == 4)
                                                 <button type="button"
                                                     onclick="bulkDocument('Validation', 'Document has been validated')"
                                                     class="btn btn-sm fw-bolder btn-primary mx-1">Validation</button>
+                                            @else
+                                                @if ($data->workflow->layer_id == 2)
+                                                    <button type="button"
+                                                        onclick="bulkDocument('Verification', 'Document has been verified')"
+                                                        class="btn btn-sm fw-bolder btn-primary mx-1">Verification</button>
+                                                @elseif($data->workflow->layer_id == 4)
+                                                    <button type="button"
+                                                        onclick="bulkDocument('Validation', 'Document has been validated')"
+                                                        class="btn btn-sm fw-bolder btn-primary mx-1">Validation</button>
+                                                @endif
                                             @endif
-                                        @endif
-                                        <button type="button"
-                                            onclick="bulkDocument('Reject', 'Document has been rejected')"
-                                            class="btn btn-sm fw-bolder btn-warning mx-1">Reject</button>
-                                        {{-- ///////////////////////////////////////// --}}
-                                        <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#kt_modal_view_signature"
-                                            class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button>
+                                            <button type="button"
+                                                onclick="bulkDocument('Reject', 'Document has been rejected')"
+                                                class="btn btn-sm fw-bolder btn-warning mx-1">Reject</button>
+                                            {{-- ///////////////////////////////////////// --}}
+                                            {{-- <button type="button" data-bs-toggle="modal"
+                                    data-bs-target="#kt_modal_view_signature"
+                                    class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button> --}}
 
-                                        <input type="hidden" id="userId" value="{{ $tokenApp }}">
-                                        <button type="button" id="downloadKabeh"
-                                            class="btn btn-sm fw-bolder btn-info mx-1">Download
-                                            All</button>
+                                            {{-- <input type="hidden" id="userId" value="{{ $tokenApp }}"> --}}
+                                            {{-- <button type="button" id="downloadKabeh"
+                                    class="btn btn-sm fw-bolder btn-info mx-1">Download
+                                    All</button> --}}
 
-                                        <script>
-                                            document.getElementById('downloadKabeh').addEventListener('click', async function() {
-                                                const userId = "{{ $tokenApp }}";
-                                                // const userId = document.getElementById('userId').value;
-                                                console.log(userId);
+                                            {{-- <script>
+                                                document.getElementById('downloadKabeh').addEventListener('click', async function() {
+                                                    const userId = document.getElementById('userId').value;
+                                                    console.log(userId);
 
-                                                if (!userId) {
-                                                    alert('Please enter a User ID');
-                                                    return;
-                                                }
-
-                                                try {
-                                                    // Ambil link file dari server berdasarkan ID
-                                                    // const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/${userId}`);
-                                                    const response = await fetch(
-                                                        `http://127.0.0.1:8000/downloadKabeh/935a5c7e-2f60-4e01-a90b-0792bad1d627`);
-                                                    if (!response.ok) throw new Error('Network response was not ok');
-
-                                                    const files = await response.json();
-                                                    console.log(files);
-
-                                                    for (const file of files) {
-                                                        try {
-                                                            const filePath = file.file_path; // Sesuaikan dengan struktur data yang diterima
-                                                            const fileResponse = await fetch(filePath);
-                                                            if (!fileResponse.ok) throw new Error('Network response was not ok');
-
-                                                            const blob = await fileResponse.blob();
-                                                            const url = window.URL.createObjectURL(blob);
-                                                            const a = document.createElement('a');
-                                                            a.style.display = 'none';
-                                                            a.href = url;
-                                                            a.download = filePath.split('/').pop(); // Mendapatkan nama file dari URL
-                                                            document.body.appendChild(a);
-                                                            a.click();
-                                                            window.URL.revokeObjectURL(url);
-                                                        } catch (error) {
-                                                            console.error('Error downloading file:', filePath, error);
-                                                        }
+                                                    if (!userId) {
+                                                        alert('Please enter a User ID');
+                                                        return;
                                                     }
-                                                } catch (error) {
-                                                    console.error('Error fetching file links:', error);
-                                                }
-                                            });
-                                        </script>
-                                        {{-- ///////////////////////////////////////////////////// --}}
+
+                                                    try {
+                                                        // Ambil link file dari server berdasarkan ID
+                                                        // const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/${userId}`);
+                                                        const myHeaders = new Headers();
+                                                        myHeaders.append("C-API-KEY", "C56c5f91b-Ae3fb-S42a3-H87c0-L39d7a8f3cd36EZ");
+
+                                                        const requestOptions = {
+                                                            method: "GET",
+                                                            headers: myHeaders,
+                                                            redirect: "follow"
+                                                        };
+
+                                                        // const response = fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions);
+                                                        // if (!response.ok) throw new Error('Network response was not ok');
+
+                                                        fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions)
+                                                            .then(res => res.json())
+                                                            .then(data => {
+                                                                obj = data;
+                                                            })
+                                                            .then(() => {
+                                                                // console.log(obj);
+                                                                const files = obj.data;
+                                                                const arrayLen = Object.getOwnPropertyNames(obj.data).length;
+                                                                // console.log(files);
+
+                                                                for (const file of files) {
+                                                                    try {
+                                                                        var filesForDownload = [];
+
+                                                                        // foreach (obj.data as data){
+                                                                        for (var i = 0; i < arrayLen; i++) {
+                                                                            filesForDownload({
+                                                                                path: obj.data[i],
+                                                                                name: obj.data[i].replace(`https://mob.cashlez.com/images/`,
+                                                                                    '')
+                                                                            });
+                                                                        }
+
+                                                                        document.getElementById('downloadKabeh').addEventListener('click', function(
+                                                                            e) {
+                                                                            e.preventDefault();
+
+                                                                            var temporaryDownloadLink = document.createElement("a");
+                                                                            temporaryDownloadLink.style.display = 'none';
+
+                                                                            document.body.appendChild(temporaryDownloadLink);
+
+                                                                            for (var n = 0; n < filesForDownload.length; n++) {
+                                                                                var download = filesForDownload[n];
+                                                                                temporaryDownloadLink.setAttribute('href', download.path);
+                                                                                temporaryDownloadLink.setAttribute('download', download
+                                                                                    .name);
+
+                                                                                temporaryDownloadLink.click();
+                                                                            }
+
+                                                                            document.body.removeChild(temporaryDownloadLink);
+                                                                        });
+                                                                    } catch (error) {
+                                                                        console.error('Error downloading file:', filePath, error);
+                                                                    }
+                                                                }
+                                                            });
+
+
+                                                    } catch (error) {
+                                                        console.error('Error fetching file links:', error);
+                                                    }
+                                                });
+                                            </script> --}}
+                                            {{-- ///////////////////////////////////////////////////// --}}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
+
                             @foreach ($documents as $doc)
                                 <input type="hidden" name="id[]" value="{{ $doc->id }}">
                                 <div class="row mb-4 py-2">
                                     <!--begin::Col-->
                                     <div class="col-xl-4">
                                         {{-- <div class="d-flex flex-column">
-                                            <div class="symbol symbol-100px symbol-2by3 cursor-pointer"
-                                                data-bs-toggle="modal" data-bs-target="#kt_modal_view_users"
-                                                onclick="handleImageClick('{{ $doc->image }}', 'Dokumen {{ $doc->document->title }}')">
-                                                <div class="symbol-label"
-                                                    style="background-image: url({{ $doc->image }})"></div>
-                                            </div>
-                                        </div> --}}
+                                <div class="symbol symbol-100px symbol-2by3 cursor-pointer" data-bs-toggle="modal"
+                                    data-bs-target="#kt_modal_view_users"
+                                    onclick="handleImageClick('{{ $doc->image }}', 'Dokumen {{ $doc->document->title }}')">
+                                    <div class="symbol-label" style="background-image: url({{ $doc->image }})"></div>
+                                </div>
+                            </div> --}}
                                         <div class="d-flex flex-column">
                                             @if ($doc->type == 'pdf')
                                                 {{-- @if (substr($url, -3) == 'pdf') --}}
@@ -229,13 +298,14 @@
                                     <div class="col-xl-8 fv-row">
                                         <div class="fs-6 fw-bold mt-2 mb-3">{{ $doc->document->title }}</div>
                                         <select name="status[]" aria-label="Select Approval"
+                                            @if (Auth::user()->role_id == 3) disabled @endif
                                             class="form-select form-select-sm form-select-solid documentSelect"
                                             id="statusSelect_{{ $doc->id }}"
                                             onchange="clearNotes({{ $doc->id }})">
                                             <option value="{{ $doc->status_approval }}">
                                                 {{ $doc->status_approval ? $doc->status_approval : '-- Select Approval --' }}
                                             </option>
-                                            @if (Auth::user()->role_id == 1)
+                                            @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                                 <option value="Verification">Verification</option>
                                                 <option value="Validation">Validation</option>
                                                 <option value="Reject">Reject</option>
@@ -250,7 +320,8 @@
                                                 @endif
                                             @endif
                                         </select>
-                                        <textarea name="notes[]" class="form-control form-control-flush mb-3" rows="1" placeholder="Type a notes"
+                                        <textarea @if (Auth::user()->role_id == 3) disabled @endif name="notes[]"
+                                            class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"
                                             id="notesSelect_{{ $doc->id }}">{{ $doc->notes }}</textarea>
                                     </div>
                                 </div>
@@ -300,12 +371,14 @@
                                                 <option value="Reject">Reject</option>
                                             @endif
                                         </select>
-                                        <textarea name="notes[]" disabled class="form-control form-control-flush mb-3" rows="1"
+                                        <textarea name="notes[]" disabled class="form-control border border-primary form-control-flush mb-3" rows="1"
                                             placeholder="Type a notes">{{ $doc->notes }}</textarea>
                                     </div>
                                 </div>
                             @endforeach
+
                         @endif
+
                         <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
                             <!--begin::Col-->
                             <div class="col-xl-4">
@@ -322,12 +395,15 @@
                                     Merchant Signature
                                 </div>
                                 <select name="statusSign" aria-label="Select Approval"
+                                @if(Auth::user()->role_id == 3)
+                                            disabled
+                                        @endif
                                     class="form-select form-select-sm form-select-solid documentSelect"
                                     id="signSelect" onchange="clearSignNotes({{ $sign->id }})">
                                     <option value="{{ $sign->status_approval }}">
                                         {{ $sign->status_approval ? $sign->status_approval : '-- Select Approval --' }}
                                     </option>
-                                    @if (Auth::user()->role_id == 1)
+                                    @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                         <option value="Verification">Verification</option>
                                         <option value="Validation">Validation</option>
                                         <option value="Reject">Reject</option>
@@ -342,14 +418,21 @@
                                         @endif
                                     @endif
                                 </select>
-                                <textarea name="notesSign" class="form-control form-control-flush mb-3" rows="1" placeholder="Type a notes"
-                                    id="notesSignSelect">{{ $sign->notes }}</textarea>
+                                <textarea
+                                @if(Auth::user()->role_id == 3)
+                                            disabled
+                                        @endif
+                                name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                    placeholder="Type a notes" id="notesSignSelect">{{ $sign->notes }}</textarea>
                             </div>
                             <!--end::Col-->
                         </div>
 
                         {{-- Summary Process --}}
-                        @if (Auth::user()->role_id == 1 ||
+                        @if(Auth::user()->role_id == 3)
+                        <div></div>
+                        @elseif (Auth::user()->role_id == 1 ||
+                                Auth::user()->role_id == 7 ||
                                 $data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
 
                             <div class="col-xl-12 fv-row" id="summaryProcess">
@@ -358,7 +441,7 @@
                                     aria-label="Select Recomendation" data-control="select2"
                                     class="form-select form-select-sm form-select-solid">
                                     <option value="">-- Select Recomendation --</option>
-                                    @if (Auth::user()->role_id == 1)
+                                    @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                         <option value="Verification" class="hideReject">Verification</option>
                                         <option value="Validation" class="hideReject">Validation</option>
                                         <option value="Approve" class="hideReject">Approve by Bank</option>
@@ -380,6 +463,12 @@
                                         @endif
                                     @endif
                                 </select>
+                                <input style="display: none" id="settingTid" type="text"
+                                    name="status_setting_tid" class="form-control form-control-solid mt-3"
+                                    placeholder="TID" autocomplete="off" />
+                                <input style="display: none" id="settingMid" type="text"
+                                    name="status_setting_mid" class="form-control form-control-solid mt-3"
+                                    placeholder="MID" autocomplete="off" />
                                 <div style="display: none" class="select_reason" id="additionalSelect">
                                     <select id="reason" name="reason" aria-label="Pilih Alasan"
                                         data-control="select2"
@@ -390,13 +479,15 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <textarea name="notes_approval" class="form-control form-control-flush mb-3" rows="1"
+                                <textarea name="notes_approval" class="form-control border border-primary form-control-flush mb-3" rows="1"
                                     placeholder="Type a notes"></textarea>
                             </div>
+
                             <div class="d-flex justify-content-end pt-7">
                                 <button type="submit" class="btn btn-sm fw-bolder btn-primary">Save
                                     Changes</button>
                             </div>
+                        
                         @else
                             @if ($merchantApproval)
                                 <div class="col-xl-12 fv-row">
@@ -408,8 +499,8 @@
                                             {{ $merchantApproval->status }}
                                         </option>
                                     </select>
-                                    <textarea name="notes_approval" disabled class="form-control form-control-flush mb-3" rows="1"
-                                        placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
+                                    <textarea name="notes_approval" disabled class="form-control border border-primary form-control-flush mb-3"
+                                        rows="1" placeholder="Type a notes">{{ $merchantApproval->notes }}</textarea>
                                 </div>
                             @endif
                         @endif
@@ -452,146 +543,152 @@
                                         <a href="#"
                                             class="fw-bolder text-gray-800 text-hover-primary fs-6">{{ $item->status }}</a>
 
-                                        @if(substr($item->approval_id,0,2) == "S-")
-                                        <span
-                                            class="text-muted fw-bolder d-block">
-                                            Merchant Signature
-                                        </span>
+                                        @if (substr($item->approval_id, 0, 3) == '000')
+                                            <span class="text-muted fw-bolder d-block">
+                                                Merchant Signature
+                                            </span>
                                         @else
-                                        <span
-                                            class="text-muted fw-bolder d-block">
-                                            {{ $item->document ? App\Helpers\Utils::getDocumentTitle($item->document->document_id) : '' }}
-                                        </span>
+                                            <span class="text-muted fw-bolder d-block">
+                                                {{ $item->document ? App\Helpers\Utils::getDocumentTitle($item->document->document_id) : '' }}
+                                            </span>
                                         @endif
                                         <span class="text-muted fw-bold d-block">{{ $item->notes }}</span>
-                                        <span
-                                            class="text-muted fw-bold d-block">{{ App\Helpers\Utils::getUserName($item->user_id) . '( ' . App\Helpers\Utils::getUserRole($item->user_id) . ' )' }}</span>
-                                    </div>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Item-->
-                            @endforeach
-
+                                        <span class="text-muted fw-bold d-block">
+                                            @if (Auth::user()->role_id == 7)
+                                                {{ App\Helpers\Utils::getUserName($item->user_id) . '( Dewa )' }}
+                                        </span>
+                                    @else
+                                        {{ App\Helpers\Utils::getUserName($item->user_id) .
+                                            '( ' .
+                                            App\Helpers\Utils::getUserRole($item->user_id) .
+                                            ' )' }}</span>
+                            @endif
                         </div>
-                    @else
-                        <span class="fw-bolder fs-4 mb-2 text-muted">History is empty</span>
-
-                    @endif
-                    <!--end::Timeline-->
-                </div>
-                <!--end: Card Body-->
-            </div>
-            <!--end: List Widget 5-->
-        </div>
-        <!--end::Col-->
-    </div>
-
-    <!--begin::Modal - View Users-->
-    <div class="modal fade" id="kt_modal_view_users" tabindex="-1" aria-hidden="true">
-        <!--begin::Modal dialog-->
-        <div class="modal-dialog mw-800px">
-            <!--begin::Modal content-->
-            <div class="modal-content">
-                <!--begin::Modal header-->
-                <div class="modal-header pb-0 border-0 justify-content-end">
-                    <!--begin::Close-->
-                    <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                        <span class="svg-icon svg-icon-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none">
-                                <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-                                    transform="rotate(-45 6 17.3137)" fill="black" />
-                                <rect x="7.41422" y="6" width="16" height="2" rx="1"
-                                    transform="rotate(45 7.41422 6)" fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                    </div>
-                    <!--end::Close-->
-                </div>
-                <!--begin::Modal header-->
-                <!--begin::Modal body-->
-                <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
-                    <!--begin::Heading-->
-                    <div class="text-center mb-13">
-                        <!--begin::Title-->
-                        <h1 class="mb-3" id="docTitle"></h1>
                         <!--end::Title-->
-                    </div>
-                    <!--end::Heading-->
-                    <!--begin::Users-->
-                    <div class="mb-10  text-center">
-                        <!--begin::List-->
-                        <div class="mh-375px me-n7 pe-7  text-center">
-                            <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
-                                <img src="" alt="" id="modalImage"
-                                    class="mh-400px mw-600px text-center">
-                            </a>
-                        </div>
-                        <!--end::List-->
-                    </div>
-                    <!--end::Users-->
                 </div>
-                <!--end::Modal body-->
+                <!--end::Item-->
+@endforeach
+
+</div>
+@else
+<span class="fw-bolder fs-4 mb-2 text-muted">History is empty</span>
+
+@endif
+<!--end::Timeline-->
+</div>
+<!--end: Card Body-->
+</div>
+<!--end: List Widget 5-->
+</div>
+<!--end::Col-->
+</div>
+
+<!--begin::Modal - View Users-->
+<div class="modal fade" id="kt_modal_view_users" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-800px modal-dialog-centered">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
+                                transform="rotate(-45 6 17.3137)" fill="black" />
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1"
+                                transform="rotate(45 7.41422 6)" fill="black" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Close-->
             </div>
-            <!--end::Modal content-->
-        </div>
-        <!--end::Modal dialog-->
-    </div>
-    <div class="modal fade" id="kt_modal_view_signature" tabindex="-1" aria-hidden="true">
-        <!--begin::Modal dialog-->
-        <div class="modal-dialog modal-dialog-centered mw-800px">
-            <!--begin::Modal content-->
-            <div class="modal-content">
-                <!--begin::Modal header-->
-                <div class="modal-header pb-0 border-0 justify-content-end">
-                    <!--begin::Close-->
-                    <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                        <span class="svg-icon svg-icon-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none">
-                                <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-                                    transform="rotate(-45 6 17.3137)" fill="black" />
-                                <rect x="7.41422" y="6" width="16" height="2" rx="1"
-                                    transform="rotate(45 7.41422 6)" fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                    </div>
-                    <!--end::Close-->
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3" id="docTitle"></h1>
+                    <!--end::Title-->
                 </div>
-                <!--begin::Modal header-->
-                <!--begin::Modal body-->
-                <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
-                    <!--begin::Heading-->
-                    <div class="text-center mb-13">
-                        <!--begin::Title-->
-                        <h1 class="mb-3">Merchant Signature</h1>
-                        <!--end::Title-->
+                <!--end::Heading-->
+                <!--begin::Users-->
+                <div class="mb-10  text-center">
+                    <!--begin::List-->
+                    <div class="mh-375px me-n7 pe-7  text-center">
+                        <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
+                            <img src="" alt="" id="modalImage"
+                                class="mh-400px mw-600px text-center">
+                        </a>
                     </div>
-                    <!--end::Heading-->
-                    <!--begin::Users-->
-                    <div class="mb-10  text-center">
-                        <!--begin::List-->
-                        <div class="mh-375px me-n7 pe-7  text-center">
-                            <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
-                                <img src="{{ $sign->image }}" alt="" id="modalImage"
-                                    class="mh-400px mw-600px text-center">
-                            </a>
-                        </div>
-                        <!--end::List-->
-                    </div>
-                    <!--end::Users-->
+                    <!--end::List-->
                 </div>
-                <!--end::Modal body-->
+                <!--end::Users-->
             </div>
-            <!--end::Modal content-->
+            <!--end::Modal body-->
         </div>
-        <!--end::Modal dialog-->
+        <!--end::Modal content-->
     </div>
-    <!--end::Modal - View Users-->
+    <!--end::Modal dialog-->
+</div>
+<div class="modal fade" id="kt_modal_view_signature" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-800px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none">
+                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
+                                transform="rotate(-45 6 17.3137)" fill="black" />
+                            <rect x="7.41422" y="6" width="16" height="2" rx="1"
+                                transform="rotate(45 7.41422 6)" fill="black" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body mx-2 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Merchant Signature</h1>
+                    <!--end::Title-->
+                </div>
+                <!--end::Heading-->
+                <!--begin::Users-->
+                <div class="mb-10  text-center">
+                    <!--begin::List-->
+                    <div class="mh-375px me-n7 pe-7  text-center">
+                        <a download="dokumen.jpg" href="" title="Dokumen" id="linkDownloadDocument">
+                            <img src="{{ $sign->image }}" alt="" id="modalImage"
+                                class="mh-400px mw-600px text-center">
+                        </a>
+                    </div>
+                    <!--end::List-->
+                </div>
+                <!--end::Users-->
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - View Users-->
 @endif
 
 <script>
@@ -611,6 +708,7 @@
         var reason = document.getElementById("reason");
 
         if (approvalStatus.value === "Reject") {
+            // alert(approvalStatus.value);
             additionalSelect.style.display = "block";
             if (layer_id == 3) {
                 tidInput.style.display = "none";
@@ -623,9 +721,6 @@
                 tidInput.style.display = "block";
                 midInput.style.display = "block";
             }
-            // additionalSelect.style.display = "none";
-            // additionalSelect.value = null
-            // reason.value = '';
         } else {
             additionalSelect.style.display = "none";
             reason.value = '';
@@ -640,12 +735,40 @@
     }
 
     function bulkDocument(value, notes) {
+
+        var approvalStatus = document.getElementById("approvalStatus");
+        var additionalSelect = document.getElementById("additionalSelect");
+        var containerStatus = document.getElementById("select2-approvalStatus-container");
+        var reason = document.getElementById("reason");
+
+        if (value == "Reject") {
+            containerStatus.innerHTML = 'Reject'
+            approvalStatus.value = 'Reject'
+            additionalSelect.style.display = "block";
+        } else if (value == "Verification") {
+            containerStatus.innerHTML = 'Verification'
+            approvalStatus.value = 'Verification'
+            additionalSelect.style.display = "none"
+            reason.value = '';
+        } else if (value == "Validation") {
+            containerStatus.innerHTML = 'Validation'
+            approvalStatus.value = 'Validation'
+            additionalSelect.style.display = "none"
+            reason.value = '';
+        } else {
+            containerStatus.innerHTML = '-- Select Recomendation --'
+            approvalStatus.value = null
+            additionalSelect.style.display = "none"
+            reason.value = '';
+        }
+
         @foreach ($documents as $doc)
             var selectElement = document.getElementById("statusSelect_{{ $doc->id }}");
             selectElement.value = value;
             var notesElement = document.getElementById("notesSelect_{{ $doc->id }}");
             notesElement.value = notes
         @endforeach
+
         var SignElement = document.getElementById("signSelect");
         SignElement.value = value;
         var notesSignElement = document.getElementById("notesSignSelect");

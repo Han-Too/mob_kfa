@@ -6,6 +6,7 @@ use App\Exports\ApplicantExport;
 use App\Helpers\BackOffice;
 use App\Helpers\Utils;
 use App\Mail\ApprovalMail;
+use App\Mail\ChangeUsername;
 use App\Models\Applicant;
 use App\Models\DokumenApplicant;
 use App\Models\HistoryApproval;
@@ -67,6 +68,7 @@ class ApplicantController extends Controller
     public function show($token)
     {
         $user = Auth::user();
+        // dd($user);
         $data = Merchant::with('user', 'workflow', 'payments')->where('token_applicant', $token)->first();
         $tokenApp = $data->token_applicant;
         $documents = MerchantDocument::with('document')->where('token_applicant', $data->token_applicant)->orderByDesc('created_at')->get();
@@ -89,6 +91,7 @@ class ApplicantController extends Controller
         $layers = MasterLayer::where('status', '!=', 'deleted')->get();
 
         $detailHis = HistoryApproval::where('token_applicant', $data->token_applicant)->where('flag', 'detail')->orderByDesc('created_at')->get();
+        
         return view('admin.applicants.show', compact('tokenApp', 'layers', 'allDocHis', 'sign', 'historyApprovalDesc', 'proofs', 'reason', 'data', 'documents', 'historyDocument', 'merchantApproval', 'historyApproval', 'payments', 'paymentApproval', 'approvals', 'documentCompleation', 'documentApprovalCompleation', 'detailHis'));
     }
 
@@ -127,6 +130,44 @@ class ApplicantController extends Controller
             }
             DB::rollBack();
             return json_encode(['status' => false, 'message' => 'Gagal Update Data Merchant!']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            // return json_encode(['status' => false, 'message' => 'Isi Semua Field!']);
+            Log::info($th);
+            return json_encode(['status' => false, 'message' => $th]);
+        }
+    }
+    public function usernameUpdate(Request $request)
+    {
+        $user = Auth::user();
+        DB::beginTransaction();
+        try {
+            $user = User::where('id', $request->id)->first();
+
+            if($user){
+
+                // $up = User::where('id', $request->id)->update([
+                //     "username" => $request->newusername,
+                // ]);
+                $mp = Merchant::where('token_applicant', $request->token)->update([
+                    "username" => $request->newusername,
+                ]);
+    
+                if ($mp) {
+                    $merchant = Merchant::where('token_applicant', $request->token)->first();
+                    // $user = User::where('id', $request->id)->first();
+                    Mail::to($merchant->email)->send(new ChangeUsername($merchant));
+                    Utils::addHistory($request->token, "Update", "Update Username Merchant", 'username', $request->id);
+                    DB::commit();
+                    return json_encode(['status' => true, 'message' => 'Success']);
+                } else {
+                    return json_encode(['status' => false, 'message' => 'Gagal Update Username Merchant!']);
+                }
+            } else {
+                DB::rollBack();
+                return json_encode(['status' => false, 'message' => 'Gagal Update Username Merchant!']);
+            }
+            
         } catch (\Throwable $th) {
             DB::rollBack();
             // return json_encode(['status' => false, 'message' => 'Isi Semua Field!']);
@@ -225,6 +266,15 @@ class ApplicantController extends Controller
                         Utils::addHistory($request->token, $statusDocument, $request->notes[$key], 'document', $id);
                     }
                     $statusDocument = Utils::statusDocument($request->statusSign);
+
+                    if($request->statusSign == "Reject"){
+                        Merchant::where('token_applicant', $request->token)
+                        ->update([
+                            'status_tanda_tangan' => 2,
+                            'status_approval' => $request->statusSign
+                        ]);
+                    }
+                    
                     MerchantSignature::where('token_applicant', $request->token)
                         ->update([
                             'status_approval' => $request->statusSign,
@@ -232,7 +282,7 @@ class ApplicantController extends Controller
                             'updated_by' => $user->id,
                             'layer_id' => $layer_id
                         ]);
-                    Utils::addHistory($request->token, $statusDocument, $request->notesSign, 'document', "S-".$id);
+                    Utils::addHistory($request->token, $request->statusSign, $request->notesSign, 'document', "000".$id);
                 }
             }
 
@@ -250,15 +300,17 @@ class ApplicantController extends Controller
             }
 
             if ($request->status_approval == 'Reject' || $request->status_approval == 'Close') {
-                Mail::to($data->email)->send(new ApprovalMail($data, $app));
-                Mail::to($data->bisnis_email)->send(new ApprovalMail($data, $app));
-                Mail::to($data->email_pengurus)->send(new ApprovalMail($data, $app));
+                Mail::to($data->email)->cc([$data->bisnis_email,$data->email_pengurus])->send(new ApprovalMail($data, $app));
+                // Mail::to($data->email)->send(new ApprovalMail($data, $app));
+                // Mail::to($data->bisnis_email)->send(new ApprovalMail($data, $app));
+                // Mail::to($data->email_pengurus)->send(new ApprovalMail($data, $app));
             }
 
             DB::commit();
             return json_encode(['status' => true, 'message' => 'Success']);
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::info($th);
             return json_encode(['status' => false, 'message' => 'Gagal Proses Data!']);
         }
     }

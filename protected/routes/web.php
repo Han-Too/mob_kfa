@@ -31,8 +31,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Route::get('/', function () {
-//     return "HELLO WORLD";
+//     return view('welcome');
 // });
+Route::get('/get_captcha/{config?}', function (\Mews\Captcha\Captcha $captcha, $config = 'default') {
+    return $captcha->src($config);
+});
 
 Route::middleware('auth')->group(function () {
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -41,6 +44,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/', [GeneralController::class, 'dashboard'])->name('user.dashboard');
 
+
+    // Address
+    Route::get('/addresslist', [GeneralController::class, 'showAddress'])->name('addressList.index');
+    Route::post('/addresslist/store', [GeneralController::class, 'storeAddress'])->name('addressList.store');
+    Route::get('/addresslist/get/{id}', [GeneralController::class, 'getAddress'])->name('addressList.get');
+    Route::post('/addresslist/update', [GeneralController::class, 'updateAddress'])->name('addressList.update');
+    Route::get('/addresslist/search', [GeneralController::class, 'searchAddress'])->name('addressList.search');
+    Route::post('/addresslist/delete/{token}', [GeneralController::class, 'deleteAddress'])->name('addresslist.delete');
 
     // User
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
@@ -122,7 +133,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents/update', [DokumenApplicantController::class, 'update'])->name('document.update');
     Route::get('/documents/delete/{id}', [DokumenApplicantController::class, 'destroy'])->name('document.delete');
 
-    Route::get('/downloadKabeh/{id}', [GeneralController::class, 'downloadZip'])->name('document.downloadZip');
+    Route::get('/download/{id}', [GeneralController::class, 'download'])->name('document.download');
 
 
     // Merchants
@@ -132,6 +143,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicant.index');
     Route::get('/applicants/show/{token}', [ApplicantController::class, 'show'])->name('applicant.show');
     Route::post('/applicants/detail/update', [ApplicantController::class, 'detailUpdate'])->name('applicant.detailUpdate');
+    Route::post('/applicants/username/update', [ApplicantController::class, 'usernameUpdate'])->name('applicant.usernameUpdate');
     Route::post('/applicants/document/update', [ApplicantController::class, 'documentUpdate'])->name('applicant.documentUpdate');
     Route::post('/applicants/merchant/update', [ApplicantController::class, 'merchantUpdate'])->name('applicant.merchantUpdate');
     Route::get('/{status}/applicants', [ApplicantController::class, 'status'])->name('applicant.status');

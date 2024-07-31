@@ -6,7 +6,9 @@
 <!--begin::Body-->
 
 <body id="kt_body" class="header-tablet-and-mobile-fixed aside-enabled">
-
+    @php
+        $user = Auth::user();
+    @endphp
     @if (session()->has('msg'))
         <script type="text/javascript">
             Swal.fire({
@@ -16,6 +18,7 @@
             });
         </script>
     @endif
+    @include('sweetalert::alert')
     <!--begin::Main-->
     <!--begin::Root-->
     <div class="d-flex flex-column flex-root">
@@ -23,12 +26,12 @@
         <div class="page d-flex flex-row flex-column-fluid">
             <!--begin::Aside-->
 
-            {{-- @if (Auth::user()->role_id != "1" || Auth::user()->role_id != "7")
+            {{-- @if (Auth::user()->role_id != '1' || Auth::user()->role_id != '7')
                 @include('admin.partials.sidebar-mo')
             @else
             @include('admin.partials.sidebar')
             @endif --}}
-            
+
             @include('admin.partials.sidebar')
 
             <!--end::Aside-->

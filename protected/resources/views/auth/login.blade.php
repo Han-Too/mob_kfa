@@ -110,7 +110,15 @@
                             <!--end::Input group-->
                             <!--begin::Actions-->
                             <div class="fv-row mb-10">
-                                <img src="{{ captcha_src() }}" alt="captcha">
+                                {{-- <img src="{{ captcha_src('flat') }}" alt="captcha"> --}}
+                                <img src="{{ captcha_src('flat') }}" onclick="this.src='/captcha/flat?'+Math.random()"
+                                    id="captchaCode" alt="" class="captcha">
+                                <a rel="nofollow" href="javascript:;" class="btn btn-primary mx-3"
+                                    onclick="document.getElementById('captchaCode').src='captcha/flat?'+Math.random()"
+                                    class="refresh">
+                                    refresh
+                                </a>
+                                {{-- <a href="javascript:void(0)" onclick="refreshCaptcha()">Refresh</a> --}}
                                 <div class="mt-2"></div>
                                 <input type="text" name="captcha"
                                     class="form-control @error('captcha') is-invalid @enderror"

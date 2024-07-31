@@ -1,5 +1,8 @@
 <x-app-layout>
     <!--begin::Navbar-->
+    {{-- @php
+        dd(Auth::user()->role->title);   
+    @endphp --}}
     <div class="card mb-4">
         <div class="card-body pt-9 pb-0">
             <!--begin::Details-->
@@ -217,20 +220,20 @@
                                     aria-valuemax="100"></div>
                             </div>
                         </div>
-                        @if (Auth::user()->role_id == 1)
+                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                             <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
                                 <div class="d-flex justify-content-between w-100 mt-auto">
                                     <span class="fw-bold fs-6 text-gray">Assign Layer</span>
-                                </div>
-                                <div class="h-5px mx-3 w-100 mb-3">
-                                    <select onchange="assignLayer()" id="approvalStatus" name="status_approval"
-                                        aria-label="Select Recomendation"
-                                        class="form-select form-select-sm form-select-solid">
-                                        <option value="">-- Select Layer --</option>
-                                        @foreach ($layers as $lay)
-                                            <option value="{{ $lay->id }}">{{ $lay->title }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="h-5px mx-3 w-100 mb-3">
+                                        <select onchange="assignLayer()" id="assignStatus" name="status_assign"
+                                            aria-label="Select Recomendation"
+                                            class="form-select form-select-sm form-select-solid">
+                                            <option value="">-- Select Layer --</option>
+                                            @foreach ($layers as $lay)
+                                                <option value="{{ $lay->id }}">{{ $lay->title }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -263,6 +266,13 @@
                     <a class="nav-link text-active-primary ms-0 me-10 py-3" data-bs-toggle="tab"
                         href="#kt_tab_pane_5">History Merchant Approval</a>
                 </li>
+                @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
+                    <li class="nav-item mt-1">
+                        <a class="nav-link text-active-primary ms-0 me-10 py-3" data-bs-toggle="tab"
+                            href="#kt_tab_pane_6">Change Merchant Username</a>
+                    </li>
+                @else
+                @endif
             </ul>
         </div>
     </div>
@@ -291,6 +301,13 @@
                     <div class="tab-pane fade row" id="kt_tab_pane_5" role="tabpanel">
                         @include('admin.applicants.tabs.merchant-applicant-history')
                     </div>
+
+                    @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
+                        <div class="tab-pane fade row" id="kt_tab_pane_6" role="tabpanel">
+                            @include('admin.applicants.tabs.username')
+                        </div>
+                    @else
+                    @endif
                 </div>
             </div>
             <!--end::Details-->
@@ -298,12 +315,13 @@
     </div>
     <!--end::Navbar-->
     @section('scripts')
+        <script src="{{ asset('tadmin/js/custom/applicant/updateUsername.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/updateDetail.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/index.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/custom.js') }}"></script>
         <script>
             function assignLayer() {
-                var selectedValue = $('#approvalStatus').val();
+                var selectedValue = $('#assignStatus').val();
                 var token = `{{ $data->token_applicant }}`;
 
                 if (selectedValue !== '') {

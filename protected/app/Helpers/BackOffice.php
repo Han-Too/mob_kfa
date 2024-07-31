@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -26,6 +27,7 @@ class BackOffice
             return $statusCode;
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
+                Log::info($e);
                 $statusCode = $e->getResponse()->getStatusCode();
                 return $statusCode;
             } else {
@@ -54,7 +56,7 @@ class BackOffice
             $businessType = "PERSEORANGAN";
         }
 
-	$auth = Auth::user();
+	    $auth = Auth::user();
         $mccId = Utils::getBoIdOutlets($merchant->mcc);
         $bankCode = Utils::getBankCode($merchant->nama_bank);
 
@@ -199,6 +201,7 @@ class BackOffice
             }
         } catch (RequestException $e) {
             Log::error('Guzzle request exception: ' . $e->getMessage());
+            Log::info($e);
             return false;
         }
     }
@@ -219,6 +222,8 @@ class BackOffice
     {
         $PBKDF2_ITERATIONS = 15000;
         $salt = BackOffice::generateSalt32Byte();
+        Log::info($salt);
+        Log::info($data);
         list($salt, $iv, $encryptedData) = explode(':', $data, 3);
         $key = hash_pbkdf2("sha256", $password, base64_decode($salt), $PBKDF2_ITERATIONS, 32, $raw_output = true);
 

@@ -161,6 +161,33 @@
                                                 <label class="required fw-bold fs-6 mb-5">Role</label>
                                                 <!--end::Label-->
                                                 <!--begin::Roles-->
+                                                @if (Auth::user()->role_id == 7)
+                                                    <!--begin::Input row-->
+                                                    <div class="d-flex fv-row">
+                                                        <!--begin::Radio-->
+                                                        <div class="form-check form-check-custom form-check-solid">
+                                                            <!--begin::Input-->
+                                                            <input class="form-check-input me-3" name="user_role"
+                                                                type="radio" value="7"
+                                                                id="kt_modal_update_role_option_7" />
+                                                            <!--end::Input-->
+                                                            <!--begin::Label-->
+                                                            <label class="form-check-label"
+                                                                for="kt_modal_update_role_option_0">
+                                                                <div class="fw-bolder text-gray-800">
+                                                                    Dewa Admin
+                                                                </div>
+                                                                <div class="text-gray-600">Has all the capabilities
+                                                                    that even superadmins don't have
+                                                                </div>
+                                                            </label>
+                                                            <!--end::Label-->
+                                                        </div>
+                                                        <!--end::Radio-->
+                                                    </div>
+                                                    <!--end::Input row-->
+                                                    <div class='separator separator-dashed my-5'></div>
+                                                @endif
                                                 @foreach ($roles as $key => $role)
                                                     <!--begin::Input row-->
                                                     <div class="d-flex fv-row">
@@ -187,6 +214,34 @@
                                                     <!--end::Input row-->
                                                     <div class='separator separator-dashed my-5'></div>
                                                 @endforeach
+                                                @if (Auth::user()->role_id == 7)
+                                                    <!--begin::Input row-->
+                                                    <div class="d-flex fv-row">
+                                                        <!--begin::Radio-->
+                                                        <div class="form-check form-check-custom form-check-solid">
+                                                            <!--begin::Input-->
+                                                            <input class="form-check-input me-3" name="user_role"
+                                                                type="radio" value="7"
+                                                                id="kt_modal_update_role_option_7" />
+                                                            <!--end::Input-->
+                                                            <!--begin::Label-->
+                                                            <label class="form-check-label"
+                                                                for="kt_modal_update_role_option_0">
+                                                                <div class="fw-bolder text-gray-800">
+                                                                    Dewa Admin
+                                                                </div>
+                                                                <div class="text-gray-600">
+                                                                    Has all the capabilities
+                                                                    that even superadmins don't have
+                                                                </div>
+                                                            </label>
+                                                            <!--end::Label-->
+                                                        </div>
+                                                        <!--end::Radio-->
+                                                    </div>
+                                                    <!--end::Input row-->
+                                                    <div class='separator separator-dashed my-5'></div>
+                                                @endif
                                                 <!--end::Roles-->
                                             </div>
                                             <!--end::Input group-->
@@ -254,6 +309,7 @@
                                                         class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                             </button>
                                         </div>
+                                    </div>
                                         <!--end::Actions-->
                                 </form>
                                 <!--end::Form-->
@@ -419,7 +475,7 @@
     <!--end::Card-->
     @section('scripts')
         <script src="{{ asset('tadmin/js/custom/user.js') }}"></script>
-        
+
         <script src="{{ asset('tadmin/js/custom/userAdd.js') }}"></script>
     @endsection
 </x-app-layout>

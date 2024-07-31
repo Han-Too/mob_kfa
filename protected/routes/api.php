@@ -22,6 +22,8 @@ Route::post('portal/login', [AuthenticationController::class, 'portalLogin']);
 
 Route::post('web/reset-password', [GeneralController::class, 'resetPassword']);
 
+Route::get('addressall', [AddressController::class, 'getAll']);
+
 Route::middleware(['api_key'])->group(function(){
     // Location
     Route::get('province', [GeneralController::class, 'province']);
@@ -42,9 +44,11 @@ Route::middleware(['api_key'])->group(function(){
     Route::get('banners', [GeneralController::class, 'banners']);
     Route::get('payments', [GeneralController::class, 'payments']);
 
-    Route::post('register', [AuthenticationController::class, 'register']);
     Route::post('login', [AuthenticationController::class, 'login']);
+    Route::post('register', [AuthenticationController::class, 'register']);
     Route::post('reset-password', [AuthenticationController::class, 'resetPassword']);
+    
+    Route::get('getDoc/{id}', [MerchantController::class, 'getDoc']);
 
     Route::middleware('auth:sanctum')->group(function () {    
         Route::post('logout', [AuthenticationController::class, 'logout']);
@@ -59,6 +63,8 @@ Route::middleware(['api_key'])->group(function(){
         Route::post('merchant/store', [MerchantController::class, 'store']);
         Route::get('merchant/show/{token}', [MerchantController::class, 'show']);
         Route::post('merchant/update', [MerchantController::class, 'update']);
+
+        Route::get('merchant/checksignature/{id}', [MerchantController::class, 'checkSignature']);
 
         // branch
         Route::get('merchant/branch/{token}', [MerchantController::class, 'branchList']);
