@@ -6,6 +6,7 @@ use App\Exports\ApplicantExport;
 use App\Helpers\BackOffice;
 use App\Helpers\Utils;
 use App\Mail\ApprovalMail;
+use App\Mail\ChangeUsername;
 use App\Models\Applicant;
 use App\Models\DokumenApplicant;
 use App\Models\HistoryApproval;
@@ -67,6 +68,7 @@ class ApplicantController extends Controller
     public function show($token)
     {
         $user = Auth::user();
+        // dd($user);
         $data = Merchant::with('user', 'workflow', 'payments')->where('token_applicant', $token)->first();
         $tokenApp = $data->token_applicant;
         $documents = MerchantDocument::with('document')->where('token_applicant', $data->token_applicant)->orderByDesc('created_at')->get();
@@ -128,6 +130,44 @@ class ApplicantController extends Controller
             }
             DB::rollBack();
             return json_encode(['status' => false, 'message' => 'Gagal Update Data Merchant!']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            // return json_encode(['status' => false, 'message' => 'Isi Semua Field!']);
+            Log::info($th);
+            return json_encode(['status' => false, 'message' => $th]);
+        }
+    }
+    public function usernameUpdate(Request $request)
+    {
+        $user = Auth::user();
+        DB::beginTransaction();
+        try {
+            $user = User::where('id', $request->id)->first();
+
+            if($user){
+
+                // $up = User::where('id', $request->id)->update([
+                //     "username" => $request->newusername,
+                // ]);
+                $mp = Merchant::where('token_applicant', $request->token)->update([
+                    "username" => $request->newusername,
+                ]);
+    
+                if ($mp) {
+                    $merchant = Merchant::where('token_applicant', $request->token)->first();
+                    // $user = User::where('id', $request->id)->first();
+                    Mail::to($merchant->email)->send(new ChangeUsername($merchant));
+                    Utils::addHistory($request->token, "Update", "Update Username Merchant", 'username', $request->id);
+                    DB::commit();
+                    return json_encode(['status' => true, 'message' => 'Success']);
+                } else {
+                    return json_encode(['status' => false, 'message' => 'Gagal Update Username Merchant!']);
+                }
+            } else {
+                DB::rollBack();
+                return json_encode(['status' => false, 'message' => 'Gagal Update Username Merchant!']);
+            }
+            
         } catch (\Throwable $th) {
             DB::rollBack();
             // return json_encode(['status' => false, 'message' => 'Isi Semua Field!']);

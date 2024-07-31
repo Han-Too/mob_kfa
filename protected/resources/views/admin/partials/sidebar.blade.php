@@ -1,3 +1,4 @@
+
 <div id="kt_aside" class="aside" data-kt-drawer="true" data-kt-drawer-name="aside"
     data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
     data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start"
@@ -8,24 +9,25 @@
         <!--begin::User-->
         <div class="aside-user d-flex align-items-sm-center justify-content-center py-5">
             <!--begin::Symbol-->
-            @if (Auth::user()->image)
+            @if ($user->image)
                 <div class="symbol symbol-50px">
-                    <img src="{{ Auth::user()->image }}" alt="" />
+                    <img src="{{ $user->image }}" alt="" />
                 </div>
             @endif
             <!--end::Symbol-->
             <!--begin::Wrapper-->
             <div class="aside-user-info flex-row-fluid flex-wrap ms-5">
+
                 <!--begin::Section-->
                 <div class="d-flex">
                     <!--begin::Info-->
                     <div class="flex-grow-1 me-2">
                         <!--begin::Username-->
                         <a href="#"
-                            class="text-white text-hover-primary fs-6 fw-bold">{{ Auth::user()->name }}</a>
+                            class="text-white text-hover-primary fs-6 fw-bold">{{ $user->name }}</a>
                         <!--end::Username-->
                         <!--begin::Description-->
-                        <span class="text-gray-600 fw-bold d-block fs-8 mb-1">{{ Auth::user()->role->title }}</span>
+                        <span class="text-gray-600 fw-bold d-block fs-8 mb-1">{{ $user->role->title }}</span>
                         <!--end::Description-->
                         <!--begin::Label-->
                         <div class="d-flex align-items-center text-success fs-9">
@@ -60,21 +62,21 @@
                             <!--begin::Menu item-->
                             <div class="menu-item px-3">
                                 <div class="menu-content d-flex align-items-center px-3">
-                                    @if (Auth::user()->image)
+                                    @if ($user->image)
                                         <!--begin::Avatar-->
                                         <div class="symbol symbol-50px me-5">
-                                            <img alt="Logo" src="{{ Auth::user()->image }}" />
+                                            <img alt="Logo" src="{{ $user->image }}" />
                                         </div>
                                         <!--end::Avatar-->
                                     @endif
                                     <!--begin::Username-->
                                     <div class="d-flex flex-column">
-                                        <div class="fw-bolder d-flex align-items-center fs-5">{{ Auth::user()->name }}
+                                        <div class="fw-bolder d-flex align-items-center fs-5">{{ $user->name }}
                                             <span
-                                                class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">{{ Auth::user()->role->title }}</span>
+                                                class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">{{ $user->role->title }}</span>
                                         </div>
                                         <a href="#"
-                                            class="fw-bold text-muted text-hover-primary fs-7">{{ Auth::user()->email }}</a>
+                                            class="fw-bold text-muted text-hover-primary fs-7">{{ $user->email }}</a>
                                     </div>
                                     <!--end::Username-->
                                 </div>
@@ -154,7 +156,7 @@
                     </a>
                 </div>
 
-                @if (Auth::user()->role_id == 7 || Auth::user()->role_id == 1)
+                @if ($user->role_id == 7 || $user->role_id == 1)
                     {{-- title user --}}
                     <div class="menu-item">
                         <div class="menu-content pt-8 pb-2">
@@ -184,7 +186,7 @@
                     </div>
                 @endif
 
-                @if (Auth::user()->role_id == 7)
+                @if ($user->role_id == 7)
                     <div class="menu-item">
                         <a class="menu-link {{ Str::startsWith(request()->path(), 'logs') ? 'active' : '' }}"
                             href="{{ route('logs') }}">
@@ -221,7 +223,7 @@
                     </div>
                 @endif
 
-                @if (Auth::user()->role_id == 7 || Auth::user()->role_id == 1)
+                @if ($user->role_id == 7 || $user->role_id == 1)
                     {{-- previlege master --}}
                     <div class="menu-item">
                         <a class="menu-link {{ Str::startsWith(request()->path(), 'privileges') ? 'active' : '' }}"
@@ -291,7 +293,7 @@
                     </a>
                 </div>
 
-                @if (Auth::user()->role_id == 7 || Auth::user()->role_id == 1)
+                @if ($user->role_id == 7 || $user->role_id == 1)
                     {{-- all applicanttt --}}
                     <div class="menu-item">
                         <a class="menu-link {{ request()->segment(1) == 'applicants' ? 'active' : '' }}"
@@ -506,7 +508,7 @@
                     @endif
                 @endif
 
-                @if (Auth::user()->role_id == 7 || Auth::user()->role_id == 1)
+                @if ($user->role_id == 7 || $user->role_id == 1)
                     {{-- sales --}}
                     <div class="menu-item">
                         <div class="menu-content pt-8 pb-2">

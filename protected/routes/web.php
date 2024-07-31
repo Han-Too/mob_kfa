@@ -143,6 +143,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicant.index');
     Route::get('/applicants/show/{token}', [ApplicantController::class, 'show'])->name('applicant.show');
     Route::post('/applicants/detail/update', [ApplicantController::class, 'detailUpdate'])->name('applicant.detailUpdate');
+    Route::post('/applicants/username/update', [ApplicantController::class, 'usernameUpdate'])->name('applicant.usernameUpdate');
     Route::post('/applicants/document/update', [ApplicantController::class, 'documentUpdate'])->name('applicant.documentUpdate');
     Route::post('/applicants/merchant/update', [ApplicantController::class, 'merchantUpdate'])->name('applicant.merchantUpdate');
     Route::get('/{status}/applicants', [ApplicantController::class, 'status'])->name('applicant.status');

@@ -55,13 +55,13 @@
                         @endforeach
 
                         @if (empty($sign))
-                        <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
-                            <div class="col">
-                                <p class="h1 text-danger">
-                                    Merchant Ini Belum Mengupload Signature
-                                </p>
+                            <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
+                                <div class="col">
+                                    <p class="h1 text-danger">
+                                        Merchant Ini Belum Mengupload Signature
+                                    </p>
+                                </div>
                             </div>
-                        </div>
                         @else
                             <div class="row mb-4 py-2 d-flex justify-content-start align-items-center">
                                 <!--begin::Col-->
@@ -135,127 +135,129 @@
                         @if (Auth::user()->role_id == 1 ||
                                 Auth::user()->role_id == 7 ||
                                 $data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
-                            <div class="row mb-4 py-2">
-                                <!--begin::Col-->
-                                <div class="col-xl-12 fv-row">
-                                    <div class="fs-6 fw-bold mb-3">Bulk Update</div>
-                                    <div class="d-flex justify-content-start">
-                                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
-                                            <button type="button"
-                                                onclick="bulkDocument('Verification', 'Document has been verified')"
-                                                class="btn btn-sm fw-bolder btn-primary mx-1">Verification</button>
-                                            <button type="button"
-                                                onclick="bulkDocument('Validation', 'Document has been validated')"
-                                                class="btn btn-sm fw-bolder btn-primary mx-1">Validation</button>
-                                        @else
-                                            @if ($data->workflow->layer_id == 2)
+                            @if (Auth::user()->role_id != 3)
+                                <div class="row mb-4 py-2">
+                                    <!--begin::Col-->
+                                    <div class="col-xl-12 fv-row">
+                                        <div class="fs-6 fw-bold mb-3">Bulk Update</div>
+                                        <div class="d-flex justify-content-start">
+                                            @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
                                                 <button type="button"
                                                     onclick="bulkDocument('Verification', 'Document has been verified')"
                                                     class="btn btn-sm fw-bolder btn-primary mx-1">Verification</button>
-                                            @elseif($data->workflow->layer_id == 4)
                                                 <button type="button"
                                                     onclick="bulkDocument('Validation', 'Document has been validated')"
                                                     class="btn btn-sm fw-bolder btn-primary mx-1">Validation</button>
+                                            @else
+                                                @if ($data->workflow->layer_id == 2)
+                                                    <button type="button"
+                                                        onclick="bulkDocument('Verification', 'Document has been verified')"
+                                                        class="btn btn-sm fw-bolder btn-primary mx-1">Verification</button>
+                                                @elseif($data->workflow->layer_id == 4)
+                                                    <button type="button"
+                                                        onclick="bulkDocument('Validation', 'Document has been validated')"
+                                                        class="btn btn-sm fw-bolder btn-primary mx-1">Validation</button>
+                                                @endif
                                             @endif
-                                        @endif
-                                        <button type="button"
-                                            onclick="bulkDocument('Reject', 'Document has been rejected')"
-                                            class="btn btn-sm fw-bolder btn-warning mx-1">Reject</button>
-                                        {{-- ///////////////////////////////////////// --}}
-                                        {{-- <button type="button" data-bs-toggle="modal"
+                                            <button type="button"
+                                                onclick="bulkDocument('Reject', 'Document has been rejected')"
+                                                class="btn btn-sm fw-bolder btn-warning mx-1">Reject</button>
+                                            {{-- ///////////////////////////////////////// --}}
+                                            {{-- <button type="button" data-bs-toggle="modal"
                                     data-bs-target="#kt_modal_view_signature"
                                     class="btn btn-sm fw-bolder btn-success mx-1">Show Signature</button> --}}
 
-                                        <input type="hidden" id="userId" value="{{ $tokenApp }}">
-                                        {{-- <button type="button" id="downloadKabeh"
+                                            {{-- <input type="hidden" id="userId" value="{{ $tokenApp }}"> --}}
+                                            {{-- <button type="button" id="downloadKabeh"
                                     class="btn btn-sm fw-bolder btn-info mx-1">Download
                                     All</button> --}}
 
-                                        <script>
-                                            document.getElementById('downloadKabeh').addEventListener('click', async function() {
-                                                const userId = document.getElementById('userId').value;
-                                                console.log(userId);
+                                            {{-- <script>
+                                                document.getElementById('downloadKabeh').addEventListener('click', async function() {
+                                                    const userId = document.getElementById('userId').value;
+                                                    console.log(userId);
 
-                                                if (!userId) {
-                                                    alert('Please enter a User ID');
-                                                    return;
-                                                }
+                                                    if (!userId) {
+                                                        alert('Please enter a User ID');
+                                                        return;
+                                                    }
 
-                                                try {
-                                                    // Ambil link file dari server berdasarkan ID
-                                                    // const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/${userId}`);
-                                                    const myHeaders = new Headers();
-                                                    myHeaders.append("C-API-KEY", "C56c5f91b-Ae3fb-S42a3-H87c0-L39d7a8f3cd36EZ");
+                                                    try {
+                                                        // Ambil link file dari server berdasarkan ID
+                                                        // const response = await fetch(`http://127.0.0.1:8000/downloadKabeh/${userId}`);
+                                                        const myHeaders = new Headers();
+                                                        myHeaders.append("C-API-KEY", "C56c5f91b-Ae3fb-S42a3-H87c0-L39d7a8f3cd36EZ");
 
-                                                    const requestOptions = {
-                                                        method: "GET",
-                                                        headers: myHeaders,
-                                                        redirect: "follow"
-                                                    };
+                                                        const requestOptions = {
+                                                            method: "GET",
+                                                            headers: myHeaders,
+                                                            redirect: "follow"
+                                                        };
 
-                                                    // const response = fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions);
-                                                    // if (!response.ok) throw new Error('Network response was not ok');
+                                                        // const response = fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions);
+                                                        // if (!response.ok) throw new Error('Network response was not ok');
 
-                                                    fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions)
-                                                        .then(res => res.json())
-                                                        .then(data => {
-                                                            obj = data;
-                                                        })
-                                                        .then(() => {
-                                                            // console.log(obj);
-                                                            const files = obj.data;
-                                                            const arrayLen = Object.getOwnPropertyNames(obj.data).length;
-                                                            // console.log(files);
+                                                        fetch("http://127.0.0.1:8000/api/getDoc/" + userId, requestOptions)
+                                                            .then(res => res.json())
+                                                            .then(data => {
+                                                                obj = data;
+                                                            })
+                                                            .then(() => {
+                                                                // console.log(obj);
+                                                                const files = obj.data;
+                                                                const arrayLen = Object.getOwnPropertyNames(obj.data).length;
+                                                                // console.log(files);
 
-                                                            for (const file of files) {
-                                                                try {
-                                                                    var filesForDownload = [];
+                                                                for (const file of files) {
+                                                                    try {
+                                                                        var filesForDownload = [];
 
-                                                                    // foreach (obj.data as data){
-                                                                    for (var i = 0; i < arrayLen; i++) {
-                                                                        filesForDownload({
-                                                                            path: obj.data[i],
-                                                                            name: obj.data[i].replace(`https://mob.cashlez.com/images/`,
-                                                                                '')
-                                                                        });
-                                                                    }
-
-                                                                    document.getElementById('downloadKabeh').addEventListener('click', function(
-                                                                        e) {
-                                                                        e.preventDefault();
-
-                                                                        var temporaryDownloadLink = document.createElement("a");
-                                                                        temporaryDownloadLink.style.display = 'none';
-
-                                                                        document.body.appendChild(temporaryDownloadLink);
-
-                                                                        for (var n = 0; n < filesForDownload.length; n++) {
-                                                                            var download = filesForDownload[n];
-                                                                            temporaryDownloadLink.setAttribute('href', download.path);
-                                                                            temporaryDownloadLink.setAttribute('download', download
-                                                                                .name);
-
-                                                                            temporaryDownloadLink.click();
+                                                                        // foreach (obj.data as data){
+                                                                        for (var i = 0; i < arrayLen; i++) {
+                                                                            filesForDownload({
+                                                                                path: obj.data[i],
+                                                                                name: obj.data[i].replace(`https://mob.cashlez.com/images/`,
+                                                                                    '')
+                                                                            });
                                                                         }
 
-                                                                        document.body.removeChild(temporaryDownloadLink);
-                                                                    });
-                                                                } catch (error) {
-                                                                    console.error('Error downloading file:', filePath, error);
+                                                                        document.getElementById('downloadKabeh').addEventListener('click', function(
+                                                                            e) {
+                                                                            e.preventDefault();
+
+                                                                            var temporaryDownloadLink = document.createElement("a");
+                                                                            temporaryDownloadLink.style.display = 'none';
+
+                                                                            document.body.appendChild(temporaryDownloadLink);
+
+                                                                            for (var n = 0; n < filesForDownload.length; n++) {
+                                                                                var download = filesForDownload[n];
+                                                                                temporaryDownloadLink.setAttribute('href', download.path);
+                                                                                temporaryDownloadLink.setAttribute('download', download
+                                                                                    .name);
+
+                                                                                temporaryDownloadLink.click();
+                                                                            }
+
+                                                                            document.body.removeChild(temporaryDownloadLink);
+                                                                        });
+                                                                    } catch (error) {
+                                                                        console.error('Error downloading file:', filePath, error);
+                                                                    }
                                                                 }
-                                                            }
-                                                        });
+                                                            });
 
 
-                                                } catch (error) {
-                                                    console.error('Error fetching file links:', error);
-                                                }
-                                            });
-                                        </script>
-                                        {{-- ///////////////////////////////////////////////////// --}}
+                                                    } catch (error) {
+                                                        console.error('Error fetching file links:', error);
+                                                    }
+                                                });
+                                            </script> --}}
+                                            {{-- ///////////////////////////////////////////////////// --}}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
 
                             @foreach ($documents as $doc)
                                 <input type="hidden" name="id[]" value="{{ $doc->id }}">
@@ -296,6 +298,7 @@
                                     <div class="col-xl-8 fv-row">
                                         <div class="fs-6 fw-bold mt-2 mb-3">{{ $doc->document->title }}</div>
                                         <select name="status[]" aria-label="Select Approval"
+                                            @if (Auth::user()->role_id == 3) disabled @endif
                                             class="form-select form-select-sm form-select-solid documentSelect"
                                             id="statusSelect_{{ $doc->id }}"
                                             onchange="clearNotes({{ $doc->id }})">
@@ -317,8 +320,9 @@
                                                 @endif
                                             @endif
                                         </select>
-                                        <textarea name="notes[]" class="form-control border border-primary form-control-flush mb-3" rows="1"
-                                            placeholder="Type a notes" id="notesSelect_{{ $doc->id }}">{{ $doc->notes }}</textarea>
+                                        <textarea @if (Auth::user()->role_id == 3) disabled @endif name="notes[]"
+                                            class="form-control border border-primary form-control-flush mb-3" rows="1" placeholder="Type a notes"
+                                            id="notesSelect_{{ $doc->id }}">{{ $doc->notes }}</textarea>
                                     </div>
                                 </div>
                             @endforeach
@@ -391,6 +395,9 @@
                                     Merchant Signature
                                 </div>
                                 <select name="statusSign" aria-label="Select Approval"
+                                @if(Auth::user()->role_id == 3)
+                                            disabled
+                                        @endif
                                     class="form-select form-select-sm form-select-solid documentSelect"
                                     id="signSelect" onchange="clearSignNotes({{ $sign->id }})">
                                     <option value="{{ $sign->status_approval }}">
@@ -411,14 +418,20 @@
                                         @endif
                                     @endif
                                 </select>
-                                <textarea name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1"
+                                <textarea
+                                @if(Auth::user()->role_id == 3)
+                                            disabled
+                                        @endif
+                                name="notesSign" class="form-control border border-primary form-control-flush mb-3" rows="1"
                                     placeholder="Type a notes" id="notesSignSelect">{{ $sign->notes }}</textarea>
                             </div>
                             <!--end::Col-->
                         </div>
 
                         {{-- Summary Process --}}
-                        @if (Auth::user()->role_id == 1 ||
+                        @if(Auth::user()->role_id == 3)
+                        <div></div>
+                        @elseif (Auth::user()->role_id == 1 ||
                                 Auth::user()->role_id == 7 ||
                                 $data->workflow->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
 
@@ -474,6 +487,7 @@
                                 <button type="submit" class="btn btn-sm fw-bolder btn-primary">Save
                                     Changes</button>
                             </div>
+                        
                         @else
                             @if ($merchantApproval)
                                 <div class="col-xl-12 fv-row">

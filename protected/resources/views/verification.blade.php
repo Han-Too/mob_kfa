@@ -166,7 +166,7 @@
     </div>
     <script>
         var apiKey = @json(env('API_KEY', ''));
-        var apiURL = "https://mob.cashlez.com";
+        var apiURL = "https://dev-mob.cashlez.com/mob";
         // var apiURL = @json(env('APP_URL', ''));
         var token = @json($token);
     </script>

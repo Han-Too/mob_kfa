@@ -1,5 +1,8 @@
 <x-app-layout>
     <!--begin::Navbar-->
+    {{-- @php
+        dd(Auth::user()->role->title);   
+    @endphp --}}
     <div class="card mb-4">
         <div class="card-body pt-9 pb-0">
             <!--begin::Details-->
@@ -263,6 +266,13 @@
                     <a class="nav-link text-active-primary ms-0 me-10 py-3" data-bs-toggle="tab"
                         href="#kt_tab_pane_5">History Merchant Approval</a>
                 </li>
+                @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
+                    <li class="nav-item mt-1">
+                        <a class="nav-link text-active-primary ms-0 me-10 py-3" data-bs-toggle="tab"
+                            href="#kt_tab_pane_6">Change Merchant Username</a>
+                    </li>
+                @else
+                @endif
             </ul>
         </div>
     </div>
@@ -291,6 +301,13 @@
                     <div class="tab-pane fade row" id="kt_tab_pane_5" role="tabpanel">
                         @include('admin.applicants.tabs.merchant-applicant-history')
                     </div>
+
+                    @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 7)
+                        <div class="tab-pane fade row" id="kt_tab_pane_6" role="tabpanel">
+                            @include('admin.applicants.tabs.username')
+                        </div>
+                    @else
+                    @endif
                 </div>
             </div>
             <!--end::Details-->
@@ -298,6 +315,7 @@
     </div>
     <!--end::Navbar-->
     @section('scripts')
+        <script src="{{ asset('tadmin/js/custom/applicant/updateUsername.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/updateDetail.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/index.js') }}"></script>
         <script src="{{ asset('tadmin/js/custom/applicant/custom.js') }}"></script>

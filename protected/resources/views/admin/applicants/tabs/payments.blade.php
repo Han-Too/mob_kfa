@@ -10,62 +10,66 @@
                 <div class="card-title fs-4 fw-bolder pt-5 px-3">Merchant's Payment Features</div>
                 <div class="separator my-2"></div>
 
-                <form action="" enctype="multipart/form-data" id="bulk_update_payment_applicant" class=" px-3">
-                    @csrf
-                    <input type="hidden" value="{{ $data->token_applicant }}" name="token">
+                @if (Auth::user()->role_id != 3)
+                    <form action="" enctype="multipart/form-data" id="bulk_update_payment_applicant" class=" px-3">
+                @endif
+                @csrf
+                <input type="hidden" value="{{ $data->token_applicant }}" name="token">
 
-                    @foreach ($payments as $pay)
-                        @if ($pay->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
-                            <input type="hidden" value="{{ $pay->id }}" name="id[]">
-                            <div class="d-flex align-self-center mb-4">
-                                <div class="flex-grow-1 me-3">
-                                    <div class="card-title fs-5 fw-bold pt-3">{{ $pay->payment }}</div>
-                                    <!--begin::Select-->
-                                    <select name="status_approval[]" class="form-select form-select-solid"
-                                        data-control="select2" data-placeholder="Recommendation"
-                                        data-hide-search="true">
-                                        <option value=""></option>
-                                        @if (Auth::user()->role_id == 4)
-                                            <option value="Validation">Validation</option>
-                                            <option value="Reject">Reject</option>
-                                            <option value="Close">Close</option>
-                                        @elseif (Auth::user()->role_id == 5)
-                                            <option value="Approve">Approve</option>
-                                            <option value="Reject">Reject</option>
-                                            <option value="Close">Close</option>
-                                        @else
-                                            <option value="Verification">Verification</option>
-                                            <option value="Reject">Reject</option>
-                                            <option value="Close">Close</option>
-                                        @endif
-                                    </select>
-                                    <!--end::Select-->
-                                </div>
+                @foreach ($payments as $pay)
+                    @if ($pay->layer_id == App\Helpers\Utils::getLayerIdByRole(Auth::user()->role_id))
+                        <input type="hidden" value="{{ $pay->id }}" name="id[]">
+                        <div class="d-flex align-self-center mb-4">
+                            <div class="flex-grow-1 me-3">
+                                <div class="card-title fs-5 fw-bold pt-3">{{ $pay->payment }}</div>
+                                <!--begin::Select-->
+                                <select name="status_approval[]" class="form-select form-select-solid"
+                                    @if (Auth::user()->role_id == 3) disabled @endif data-control="select2"
+                                    data-placeholder="Recommendation" data-hide-search="true">
+                                    <option value=""></option>
+                                    @if (Auth::user()->role_id == 4)
+                                        <option value="Validation">Validation</option>
+                                        <option value="Reject">Reject</option>
+                                        <option value="Close">Close</option>
+                                    @elseif (Auth::user()->role_id == 5)
+                                        <option value="Approve">Approve</option>
+                                        <option value="Reject">Reject</option>
+                                        <option value="Close">Close</option>
+                                    @else
+                                        <option value="Verification">Verification</option>
+                                        <option value="Reject">Reject</option>
+                                        <option value="Close">Close</option>
+                                    @endif
+                                </select>
+                                <!--end::Select-->
                             </div>
-                            <textarea name="notes_approval[]" class="form-control border border-primary form-control-flush mb-3 mt-3 " rows="3"
-                                placeholder="Type a notes"></textarea>
-                            <div class="separator my-2"></div>
-                        @else
-                            <div class="d-flex align-self-center mb-4">
-                                <div class="flex-grow-1 me-3">
-                                    <div class="card-title fs-5 fw-bold pt-3">{{ $pay->payment }}</div>
-                                    <!--begin::Select-->
-                                    <select class="form-select form-select-solid" data-control="select2"
-                                        data-placeholder="Recommendation" data-hide-search="true" disabled>
-                                        <option value="{{ $pay->status_approval }}">{{ $pay->internal_status }}</option>
-                                    </select>
-                                    <!--end::Select-->
-                                </div>
+                        </div>
+                        <textarea @if (Auth::user()->role_id == 3) disabled @endif name="notes_approval[]"
+                            class="form-control border border-primary form-control-flush mb-3 mt-3 " rows="3" placeholder="Type a notes"></textarea>
+                        <div class="separator my-2"></div>
+                    @else
+                        <div class="d-flex align-self-center mb-4">
+                            <div class="flex-grow-1 me-3">
+                                <div class="card-title fs-5 fw-bold pt-3">{{ $pay->payment }}</div>
+                                <!--begin::Select-->
+                                <select class="form-select form-select-solid" data-control="select2"
+                                    data-placeholder="Recommendation" data-hide-search="true" disabled>
+                                    <option value="{{ $pay->status_approval }}">{{ $pay->internal_status }}</option>
+                                </select>
+                                <!--end::Select-->
                             </div>
-                            <textarea class="form-control border border-primary form-control-flush mb-3 mt-3 " rows="3" disabled>{{ $pay->notes }}</textarea>
-                            <div class="separator my-2"></div>
-                        @endif
-                    @endforeach
+                        </div>
+                        <textarea class="form-control border border-primary form-control-flush mb-3 mt-3 " rows="3" disabled>{{ $pay->notes }}</textarea>
+                        <div class="separator my-2"></div>
+                    @endif
+                @endforeach
+                @if (Auth::user()->role_id != 3)
                     <div class="d-flex justify-content-end pt-7">
                         <button type="submit" class="btn btn-sm fw-bolder btn-primary">Save
                             Changes</button>
                     </div>
-                </form>
+                    </form>
+                @endif
                 {{-- @if (count($paymentApproval) > 0)
                     <form action="" enctype="multipart/form-data" id="bulk_update_payment_applicant" class=" px-3">
                         @csrf
